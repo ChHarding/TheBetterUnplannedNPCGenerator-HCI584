@@ -1,4 +1,5 @@
 from tkinter import *
+from NPC import NPC
 
 win = Tk()
 #Set the geometry of frame
@@ -21,15 +22,16 @@ middleColumn.grid(row=0, column=1, rowspan=2, padx=5, pady=5, ipadx=5, ipady=5, 
 Label(options, text='Choose the options').grid(row=0,column=1)
 Button(options, text='Generate NPC').grid(row=1,column=1)
 
-npc = LabelFrame(win, text='NPC')
-rightColumnTop = npc
+npcFrame = LabelFrame(win, text='NPC')
+rightColumnTop = npcFrame
 rightColumnTop.grid(row=0,column=2,sticky='NWES') 
 
-Label(npc, text='Your Generated NPC').grid(row=0,column=2)
-name = Label(npc, text="Randy Randington",font='Arial 18 bold').grid(row=1,column=2)
-race = Label(npc, text="Race: Human").grid(row=2,column=2)
-age = Label(npc, text="Age: 28").grid(row=3,column=2)
-gender = Label(npc, text="Gender: Male").grid(row=4,column=2)
+npc = NPC("Any","Any","Any","Any")
+
+name = Label(npcFrame, text=npc.name[0] + " " + npc.name[1],font='Arial 18 bold').grid(row=1,column=2)
+race = Label(npcFrame, text="Race: " + npc.race).grid(row=2,column=2)
+age = Label(npcFrame, text="Age: " + str(npc.age)).grid(row=3,column=2)
+gender = Label(npcFrame, text="Gender: " + npc.gender).grid(row=4,column=2)
 
 #Button(npc, text='Export NPC').grid(row=1,column=2)
 
@@ -41,5 +43,6 @@ testList = ('NPC1', 'NPC2', 'NPC3', 'NPC4', 'NPC5')
 
 Label(npcHistory, text='Last 5 NPCs Generated').grid(row=3,column=2)
 Listbox(npcHistory,listvariable=testList,).grid(row=4,column=2)
+
 
 win.mainloop()
