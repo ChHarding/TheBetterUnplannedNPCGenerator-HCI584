@@ -20,13 +20,12 @@ class NPC:
         else:
             self.gender = generateGender()
 
-        self.lifeStage = "" 
         if (lifeStage == "Any"): # Child, Teenager, Young Adult, Adult, Elder
             self.lifeStage = generateLifeStage()
         else:
             self.lifeStage = lifeStage
         
-        self.age = getAge(self.race, self.lifeStage)
+        self.age = str(getAge(self.race, self.lifeStage))
 
         if (culture == "Traditional"):
             self.name = getNameByRaceTradition(self.race)
@@ -46,7 +45,7 @@ def generateLifeStage():
     return "Young Adult" # Implement random life stage selection
 
 def getAge(race, lifeStage):
-    return 25
+    return "25"
     # Get the race appropriate age range for the provided life stage, then randomly select within that range
 
 def getNameByRaceTradition(race):
