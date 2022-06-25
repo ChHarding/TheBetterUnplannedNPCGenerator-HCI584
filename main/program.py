@@ -18,11 +18,6 @@ class BetterNPCGenerator():
 
         self.raceTraitsOptions = self.loadOptionsFromFile(self.optionsFilePath + "Race Traits - Default.csv")
 
-        for race in self.raceTraitsOptions:
-            print(race)
-
-
-
         # ==================== #
         # Left Column: Presets #
         # ==================== #
@@ -147,10 +142,9 @@ class BetterNPCGenerator():
                     self.lifeStageChoice.get(),
                     self.cultureChoice.get()    )
 
-
         self.nameLabel.configure(text=npc.name[0] + " " + npc.name[1])
         self.raceLabel.configure(text="Race: " + npc.race)
-        self.ageLabel.configure(text="Age: " + npc.age)
+        self.ageLabel.configure(text="Age: " + npc.age + " (" + npc.lifeStage + ")")
         self.genderLabel.configure(text="Gender: " + npc.gender)
 
         #updateNPCHistory(npc)

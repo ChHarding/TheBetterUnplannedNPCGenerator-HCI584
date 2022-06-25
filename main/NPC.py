@@ -1,3 +1,7 @@
+import csv
+import random
+
+
 class NPC:
     #name = ("FirstName","LastName")
     #race = ""
@@ -9,51 +13,114 @@ class NPC:
     # faith
     # alignment # Examples: Chaotic Neutral, Lawful Good, etc. May be informed by faith.
 
+    namesFilePath = "main\\resources\\names\\"
+
     def __init__(self, options, race, gender, lifeStage, culture):
+        self.options = options
+
         if (race != "Any"):
             self.race = race
         else:
-            self.race = generateRace()
+            self.race = self.generateRace()
+
+        raceTraits = []
+
+        for raceTraitOption in self.options:
+            if (self.race == raceTraitOption[0]):
+                raceTraits = raceTraitOption
+                break
+
+        if (raceTraits.count == 0):
+            print("Somehow you have selected an option that doesn't exist, or I am a bad programmer.")
+            exit
         
+        #TODO: Need a better way to map these values. Maybe an object?
+        raceLifeStages = [  ("Child",raceTraits[1]),
+                            ("Adolescent",raceTraits[2]),
+                            ("Young Adult",raceTraits[3]),
+                            ("Adult",raceTraits[4]),
+                            ("Elder",raceTraits[5]),
+                            ("Max",raceTraits[6])   ] # Maximum age possible, not it's own lifeStage
+
         if (gender != "Any"):
-            self.gender = gender
+            self.gender = gender[0:1]
         else:
-            self.gender = generateGender()
+            self.gender = self.generateGender()
 
         if (lifeStage == "Any"): # Child, Teenager, Young Adult, Adult, Elder
-            self.lifeStage = generateLifeStage()
+            self.lifeStage = self.generateLifeStage()
         else:
             self.lifeStage = lifeStage
         
-        self.age = str(getAge(self.race, self.lifeStage))
+        self.age = str(self.getAge(raceLifeStages, self.lifeStage))
 
         if (culture == "Traditional"):
-            self.name = getNameByRaceTradition(self.race)
+            self.name = self.getNameByRaceTradition(raceTraits[7],raceTraits[8],self.gender)
         elif (culture == "Common"):
-            self.name = getCommonName()
+            self.name = self.getCommonName(self.gender)
         else:
-            self.name = getTrueRandomName()
+            self.name = self.getTrueRandomName(self.gender)
         
+        print(self.name)
 
-def generateRace():
+    def generateRace(self):
+        race = random.choice(self.options)
+        return race[0]
+        #TODO: Implement weighted selection
 
-    return "Human" # Implement random race selection
+    def generateGender(self):
+        return random.choice(["M","F"]) 
+        #TODO: Load from CSV to allow user to configure custom genders
 
-def generateGender():
-    return "Male" # Implement random gender selection
+    def generateLifeStage(self):
+        return random.choice(["Child","Adolescent","Young Adult","Adult","Elder"]) 
+        #TODO: Implement loading life stage choices
 
-def generateLifeStage():
-    return "Young Adult" # Implement random life stage selection
+    def getAge(self, raceStages, lifeStage):
+        
+        lowRange = 0
+        upRange = 0
 
-def getAge(race, lifeStage):
-    return "25"
-    # Get the race appropriate age range for the provided life stage, then randomly select within that range
+        for index, stage in enumerate(raceStages):
+            if (lifeStage == stage[0]):
+                lowRange = int(stage[1])
+                upRange = int(raceStages[index+1][1])
 
-def getNameByRaceTradition(race):
-    return ("TradFirstName", "TradLastName")
+        return random.randrange(lowRange,upRange)
+        #TODO: Need a better way to implement this in general
 
-def getCommonName():
-    return ("CommonFirstName", "CommonLastName")
+    def getNameByRaceTradition(self, fnTradition, sTradition, gender):
 
-def getTrueRandomName():
-    return ("Randy","Randington")
+        if (gender != "M" and gender != "F"):
+            gender = "U"
+
+        firstNamesFile = open(self.namesFilePath + fnTradition + " First Names.csv")
+        surnamesFile = open(self.namesFilePath + sTradition + " Surnames.csv")
+
+        reader = csv.reader(firstNamesFile)
+
+        firstNames = []
+        for name in reader:
+            if (gender == "U" or (name[1] == gender or name[1] == "U")):
+                firstNames.append(name[0])
+                print(name)
+
+        firstNamesFile.close()
+
+        reader = csv.reader(surnamesFile)
+
+        surnames = []
+        for surname in reader:
+            surnames.append(surname[0])
+
+        surnamesFile.close()
+
+        return (random.choice(firstNames), random.choice(surnames))
+
+    def getCommonName(self, gender):
+        return self.getNameByRaceTradition("Common","Common", gender)
+
+    def getTrueRandomName(self, gender):
+        fnTrads = ["Common","Draconic","Dwarvish","Elvish","Halfling","Orcish"]
+        sTrads = ["Common","Draconic","Dwarvish","Elvish","Halfling"]
+        return self.getNameByRaceTradition(random.choice(fnTrads), random.choice(sTrads), gender)
