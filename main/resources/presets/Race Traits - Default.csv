@@ -1,0 +1,8 @@
+Race,GenWeight,Child,Adolescent,Young Adult,Adult,Elder,Max Age,Tradition First Name,Tradition Last Name
+Human,25,4,13,18,35,60,100,Common,Common
+Half-Elf,15,4,13,18,95,140,180,Elvish|Common,Common|Elvish
+Half-Orc,10,4,13,18,35,60,100,Orcish|Common,Common
+Elf,15,5,15,100,300,500,700,Elvish,Elvish
+Dwarf,20,4,13,50,200,300,350,Dwarvish,Dwarvish
+Halfling,10,4,13,20,100,200,250,Halfling,Halfling
+Dragonborn,5,1,5,15,30,50,80,Draconic,Draconic
