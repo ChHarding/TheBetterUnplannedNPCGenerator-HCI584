@@ -9,7 +9,7 @@ class NPC:
     # faith
     # alignment # Examples: Chaotic Neutral, Lawful Good, etc. May be informed by faith.
 
-    def __init__(self, race, gender, lifeStage, culture):
+    def __init__(self, options, race, gender, lifeStage, culture):
         if (race != "Any"):
             self.race = race
         else:
@@ -36,6 +36,7 @@ class NPC:
         
 
 def generateRace():
+
     return "Human" # Implement random race selection
 
 def generateGender():
