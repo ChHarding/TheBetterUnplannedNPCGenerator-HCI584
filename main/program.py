@@ -1,17 +1,29 @@
 from tkinter import *
 from NPC import NPC
+import csv
 
 class BetterNPCGenerator():
 
+    optionsFilePath = "main\\resources\\presets\\"
+    namesFilePath = "main\\resources\\names"
+
     def __init__(self):
         self.root = Tk()
+
+        self.raceTraits = self.loadOptionsFromFile(self.optionsFilePath + "Race Traits - Default.csv")
+
+        for race in self.raceTraits:
+            print(race)
 
         # Set up 3 Column structure
         selectPreset = LabelFrame(self.root, text='Select Preset')
         leftColumn = selectPreset
         leftColumn.grid(row=0, column=0, rowspan=2, padx=5, pady=5, ipadx=5, ipady=5, sticky='NWES') 
 
-        Label(selectPreset, text='Generic NPC').grid(row=0,column=0)
+        Label(selectPreset, text='Default').grid(row=0,column=0)
+        # On Click of another preset in list: reload options
+        # File name will be [ "Race Traits - " + OptionName + ".csv" ] in resources>presets
+
 
         options = LabelFrame(self.root, text='Options')
         middleColumn = options
@@ -66,5 +78,19 @@ class BetterNPCGenerator():
     def updateNPCHistory(npc):
         # Update the NPC History
         return None
+
+    def loadOptionsFromFile(self, optionsFileName):
+        optionsPresetFile = open(optionsFileName)
+
+        optionsReader = csv.reader(optionsPresetFile)
+
+        raceTraits = []
+        for race in optionsReader:
+            raceTraits.append(race)
+
+        optionsPresetFile.close()
+        
+        return raceTraits
+
 
 app = BetterNPCGenerator()
