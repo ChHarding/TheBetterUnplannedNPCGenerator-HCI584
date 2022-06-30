@@ -1,5 +1,7 @@
 import csv
 import random
+import sys
+from tkinter import messagebox
 
 
 class NPC:
@@ -31,8 +33,9 @@ class NPC:
                 break
 
         if (raceTraits.count == 0):
-            print("Somehow you have selected an option that doesn't exist, or I am a bad programmer.")
-            exit
+            errorMessage = "Somehow you have selected a race option that doesn't exist, or I am a bad programmer."
+            messagebox.showerror("NPC Generation Error", errorMessage)
+            sys.exit(errorMessage)
         
         #TODO: Need a better way to map these values. Maybe an object?
         raceLifeStages = [  ("Child",raceTraits[1]),
@@ -82,9 +85,14 @@ class NPC:
         upRange = 0
 
         for index, stage in enumerate(raceStages):
-            if (lifeStage == stage[0]):
+            if (lifeStage == stage[0] and len(raceStages) != index-1):
                 lowRange = int(stage[1])
                 upRange = int(raceStages[index+1][1])
+
+        if (lowRange == 0 or upRange == 0):
+            errorMessage = "Something went wrong determining the age range for a " + lifeStage + " " + self.race + "."
+            messagebox.showerror("NPC Generation Error", errorMessage)
+            sys.exit(errorMessage)
 
         return random.randrange(lowRange,upRange)
         #TODO: Need a better way to implement this in general
