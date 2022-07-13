@@ -1,3 +1,4 @@
+import os
 from tkinter import *
 
 from sqlalchemy import column
@@ -6,7 +7,7 @@ import csv
 
 class BetterNPCGenerator():
 
-    optionsFilePath = "main\\resources\\presets\\"
+    presetsFilePath = "main\\resources\\presets\\"
     namesFilePath = "main\\resources\\names"
 
     leftStartColumn = 0
@@ -15,19 +16,25 @@ class BetterNPCGenerator():
 
     def __init__(self):
         self.root = Tk()
+        self.root.title("The Better Unplanned NPC Generator")
 
-        self.raceTraitsOptions = self.loadOptionsFromFile(self.optionsFilePath + "Race Traits - Default.csv")
+        self.raceTraitsOptions = self.loadOptionsFromFile(self.presetsFilePath + "Default.csv")
 
         # ==================== #
         # Left Column: Presets #
         # ==================== #
 
         # Set up 3 Column structure
-        selectPreset = LabelFrame(self.root, text='Select Preset')
-        leftColumn = selectPreset
+        self.selectPreset = LabelFrame(self.root, text='Select Preset')
+        leftColumn = self.selectPreset
         leftColumn.grid(row=0, column=self.leftStartColumn, rowspan=2, padx=5, pady=5, ipadx=5, ipady=5, sticky='NWES') 
 
-        Label(selectPreset, text='Default').grid(row=0,column=self.leftStartColumn)
+        presets = os.listdir(self.presetsFilePath)
+
+        self.selectedPreset = StringVar()
+        self.buildPresetsMenu(presets, "Default.csv")
+
+        # Label(selectPreset, text='Default').grid(row=0,column=self.leftStartColumn)
         # On Click of another preset in list: reload options
         # File name will be [ "Race Traits - " + OptionName + ".csv" ] in resources>presets
 
@@ -100,6 +107,9 @@ class BetterNPCGenerator():
         generateNPCButton = Button(options, text='Generate NPC',command=self.generateNPC)
         generateNPCButton.grid(row=10,column=self.middleStartColumn,columnspan=2)
 
+        savePresetButton = Button(options, text='Test Presets',command=self.buildPresetsMenu(presets, "Default2.csv"))
+        savePresetButton.grid(row=10,column=self.middleStartColumn+1,columnspan=2)
+
 
 
         # ========================= #
@@ -147,8 +157,6 @@ class BetterNPCGenerator():
         self.ageLabel.configure(text="Age: " + npc.age + " (" + npc.lifeStage + ")")
         self.genderLabel.configure(text="Gender: " + npc.gender)
 
-        #updateNPCHistory(npc)
-
     def updateNPCHistory(npc):
         # Update the NPC History
         return None
@@ -170,6 +178,18 @@ class BetterNPCGenerator():
         
     def refreshOptionsForm(self, options):
         self.raceDropDown.configure(values=options)
+    
+    def buildPresetsMenu(self, values, select):
+        for item in self.selectPreset.winfo_children():
+            item.destroy()
+        displayRow = 0
+        for text in values:
+            radio = Radiobutton(self.selectPreset, text = str.removesuffix(text,".csv"), variable = self.selectedPreset,
+                value = text, indicator = 0,
+                background = "light blue")
+            radio.grid(row=displayRow,column=self.leftStartColumn)
+            displayRow = displayRow + 1
+        self.selectedPreset.set(select)
+            
 
 
-app = BetterNPCGenerator()

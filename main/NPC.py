@@ -43,7 +43,7 @@ class NPC:
                             ("Young Adult",raceTraits[3]),
                             ("Adult",raceTraits[4]),
                             ("Elder",raceTraits[5]),
-                            ("Max",raceTraits[6])   ] # Maximum age possible, not it's own lifeStage
+                            ("Max",raceTraits[6])   ] # Maximum age possible, not its own lifeStage
 
         if (gender != "Any"):
             self.gender = gender[0:1]
