@@ -1,4 +1,5 @@
 import csv
+import math
 import random
 import sys
 from tkinter import messagebox
@@ -45,6 +46,11 @@ class NPC:
                             ("Elder",raceTraits[6]),
                             ("Max",raceTraits[7])   ] # Maximum age possible, not its own lifeStage
 
+        self.eyeColor = self.generateRandomTraitPipeDelimited(raceTraits[10])
+
+        self.raceSkinLabel = raceTraits[11] + " Color: "
+        self.primaryColor = self.generateRandomTraitPipeDelimited(raceTraits[12])
+
         if (gender != "Any"):
             self.gender = gender[0:1]
         else:
@@ -55,6 +61,33 @@ class NPC:
         else:
             self.lifeStage = lifeStage
         
+        self.height = self.generateHeight(raceTraits[19], raceTraits[20], self.gender, self.lifeStage)
+        self.bodyType = random.choice(["Thin","Lean","Lanky","Slender","Petite","Athletic","Muscular","Heavy","Portly","Plump","Chubby","Big-Boned","Beefy","Well-Built"])
+        #TODO: Implement loading body types from file
+
+
+        if (raceTraits[13] != ""):
+            self.att1Label = raceTraits[13] + ": "
+            self.att1Property = self.generateRandomTraitPipeDelimited(raceTraits[14])
+        else: 
+            self.att1Label = ""
+            self.att1Property = ""
+
+        if (raceTraits[15] != ""):
+            self.att2Label = raceTraits[15] + ": "
+            self.att2Property = self.generateRandomTraitPipeDelimited(raceTraits[16])
+        else: 
+            self.att2Label = ""
+            self.att2Property = ""
+
+        if (raceTraits[17] != ""):
+            self.att3Label = raceTraits[17] + ": "
+            self.att3Property = self.generateRandomTraitPipeDelimited(raceTraits[18])
+        else:  
+            self.att3Label = ""
+            self.att3Property = ""
+
+
         self.age = str(self.getAge(raceLifeStages, self.lifeStage))
 
         if (culture == "Traditional"):
@@ -63,8 +96,10 @@ class NPC:
             self.name = self.getCommonName(self.gender)
         else:
             self.name = self.getTrueRandomName(self.gender)
-        
-        print(self.name)
+
+    def generateRandomTraitPipeDelimited(self,traitString):
+        traits = traitString.split("|")
+        return random.choice(traits)
 
     def generateRace(self):
         race = random.choice(self.options)
@@ -78,6 +113,32 @@ class NPC:
     def generateLifeStage(self):
         return random.choice(["Child","Adolescent","Young Adult","Adult","Elder"]) 
         #TODO: Implement loading life stage choices
+
+    def generateHeight(self, min, max, gender, lifeStage):
+        lowRange = int(min)
+        upRange = int(max) + 1
+
+        height = random.randrange(lowRange, upRange)
+        randomDeviationValue = random.uniform(0,0.1)
+        randomDeviation = int(height*randomDeviationValue)
+
+        if (gender == "M"):
+            height = height + randomDeviation
+        if (gender == "F"):
+            height = height - randomDeviation
+
+        if (lifeStage == "Child"):
+            height = height - (height/3)
+        
+        if (lifeStage == "Adolescent"):
+            height = height - (height/5) 
+
+        return self.getHeightString(height)
+    
+    def getHeightString(self, heightInInches):
+        feet = math.trunc(heightInInches / 12)
+        inches = int(heightInInches % 12)
+        return str(feet) + "'" + str(inches) + "\""
 
     def getAge(self, raceStages, lifeStage):
         
@@ -111,7 +172,6 @@ class NPC:
         for name in reader:
             if (gender == "U" or (name[1] == gender or name[1] == "U")):
                 firstNames.append(name[0])
-                print(name)
 
         firstNamesFile.close()
 

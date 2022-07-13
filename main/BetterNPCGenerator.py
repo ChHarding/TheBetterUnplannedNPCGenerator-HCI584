@@ -137,7 +137,7 @@ class BetterNPCGenerator():
         generateNPCButton = Button(options, text='Generate NPC',command=self.generateNPC)
         generateNPCButton.grid(row=10,column=self.middleStartColumn,columnspan=2)
 
-        savePresetButton = Button(options, text='Test Presets',command=self.buildPresetsMenu(presets, "Default2.csv"))
+        savePresetButton = Button(options, text='Test Presets',command=self.buildPresetsMenu(presets, "Default.csv"))
         savePresetButton.grid(row=10,column=self.middleStartColumn+1,columnspan=2)
 
 
@@ -158,8 +158,22 @@ class BetterNPCGenerator():
         self.ageLabel.grid(row=2,column=self.rightStartColumn)
         self.genderLabel = Label(npcFrame, text="Gender: ")
         self.genderLabel.grid(row=3,column=self.rightStartColumn)
+        self.heightLabel = Label(npcFrame, text="Height: ")
+        self.heightLabel.grid(row=4,column=self.rightStartColumn)
+        self.bodyTypeLabel = Label(npcFrame, text="Body Type: ")
+        self.bodyTypeLabel.grid(row=5,column=self.rightStartColumn)
+        self.eyeColorLabel = Label(npcFrame)
+        self.eyeColorLabel.grid(row=6,column=self.rightStartColumn)
+        self.skinLabel = Label(npcFrame)
+        self.skinLabel.grid(row=7,column=self.rightStartColumn)
+        self.attribute1Label = Label(npcFrame)
+        self.attribute1Label.grid(row=8,column=self.rightStartColumn)
+        self.attribute2Label = Label(npcFrame)
+        self.attribute2Label.grid(row=9,column=self.rightStartColumn)
+        self.attribute3Label = Label(npcFrame)
+        self.attribute3Label.grid(row=10,column=self.rightStartColumn)
 
-        Button(npcFrame, text='Export NPC').grid(row=4,column=self.rightStartColumn)
+        Button(npcFrame, text='Export NPC').grid(row=20,column=self.rightStartColumn)
 
         npcHistory = LabelFrame(self.root, text='History')
         rightColumnBottom = npcHistory
@@ -188,6 +202,13 @@ class BetterNPCGenerator():
         self.raceLabel.configure(text="Race: " + npc.race)
         self.ageLabel.configure(text="Age: " + npc.age + " (" + npc.lifeStage + ")")
         self.genderLabel.configure(text="Gender: " + npc.gender)
+        self.heightLabel.configure(text="Height: " + npc.height)
+        self.bodyTypeLabel.configure(text="Body Type: " + npc.bodyType)
+        self.eyeColorLabel.configure(text="Eye Color: " + npc.eyeColor)
+        self.skinLabel.configure(text=npc.raceSkinLabel + npc.primaryColor)
+        self.attribute1Label.configure(text=npc.att1Label + npc.att1Property)
+        self.attribute2Label.configure(text=npc.att2Label + npc.att2Property)
+        self.attribute3Label.configure(text=npc.att3Label + npc.att3Property)
 
     def updateNPCHistory(npc):
         # Update the NPC History
