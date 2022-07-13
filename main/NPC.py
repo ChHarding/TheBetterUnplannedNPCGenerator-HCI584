@@ -9,21 +9,21 @@ class NPC:
     #race = ""
     #age = 0 # Age Ranges will Differ Per Race
     #gender = "" # male, female, nonbinary. Expanded gender options can be end-user configured.
-    # physicalChars = ("eyeColor", "skinColor", "hairColor", "hairChars", "height", "build")
+    # physicalChars = ("eyeColor", "skinColor", "height", "build", "")
     # occupation
     # lifestyle # Options: Wretched, Squalid, Poor, Modest, Comfortable, Wealthy, Aristocratic
     # faith
-    # alignment # Examples: Chaotic Neutral, Lawful Good, etc. May be informed by faith.
 
     namesFilePath = "main\\resources\\names\\"
 
-    def __init__(self, options, race, gender, lifeStage, culture):
+    def __init__(self, options, race, gender, lifeStage, occType, lifestyle, culture):
         self.options = options
 
-        if (race != "Any"):
-            self.race = race
-        else:
+
+        if (race == "Any"):
             self.race = self.generateRace()
+        else:
+            self.race = race
 
         raceTraits = []
 
@@ -38,12 +38,12 @@ class NPC:
             sys.exit(errorMessage)
         
         #TODO: Need a better way to map these values. Maybe an object?
-        raceLifeStages = [  ("Child",raceTraits[1]),
-                            ("Adolescent",raceTraits[2]),
-                            ("Young Adult",raceTraits[3]),
-                            ("Adult",raceTraits[4]),
-                            ("Elder",raceTraits[5]),
-                            ("Max",raceTraits[6])   ] # Maximum age possible, not its own lifeStage
+        raceLifeStages = [  ("Child",raceTraits[2]),
+                            ("Adolescent",raceTraits[3]),
+                            ("Young Adult",raceTraits[4]),
+                            ("Adult",raceTraits[5]),
+                            ("Elder",raceTraits[6]),
+                            ("Max",raceTraits[7])   ] # Maximum age possible, not its own lifeStage
 
         if (gender != "Any"):
             self.gender = gender[0:1]
@@ -58,7 +58,7 @@ class NPC:
         self.age = str(self.getAge(raceLifeStages, self.lifeStage))
 
         if (culture == "Traditional"):
-            self.name = self.getNameByRaceTradition(raceTraits[7],raceTraits[8],self.gender)
+            self.name = self.getNameByRaceTradition(raceTraits[8],raceTraits[9],self.gender)
         elif (culture == "Common"):
             self.name = self.getCommonName(self.gender)
         else:
