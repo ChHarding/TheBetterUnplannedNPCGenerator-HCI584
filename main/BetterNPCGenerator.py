@@ -1,3 +1,4 @@
+from cProfile import label
 import os
 from tkinter import *
 
@@ -87,23 +88,52 @@ class BetterNPCGenerator():
         #TODO: Make into multi-select option to allow user to select from a range
         self.lifeStageDropDown.grid(row=3,column=self.middleStartColumn+1)
 
+        # Occupation
+        self.occupationTypeOptions = ["Any"]
+        #TODO: Load from a file
+        self.occupationTypeChoices = StringVar()
+        self.occupationTypeChoices.set("Any")
+
+        occupationTypeDropDownLabel = Label(options,text="Occupation Type")
+        occupationTypeDropDownLabel.grid(row=4,column=self.middleStartColumn)
+        self.occupationTypeDropDown = OptionMenu(options, self.occupationTypeChoices, *self.occupationTypeOptions) 
+        #TODO: Make into multi-select option to allow user to select from a range
+        self.occupationTypeDropDown.grid(row=4,column=self.middleStartColumn+1)
+
+
+        # Lifestyle
+        self.lifestyleTypeOptions = ["Any"]
+        #TODO: Load from a file
+        self.lifestyleTypeChoices = StringVar()
+        self.lifestyleTypeChoices.set("Any")
+
+        lifestyleTypeDropDownLabel = Label(options,text="Lifestyle")
+        lifestyleTypeDropDownLabel.grid(row=5,column=self.middleStartColumn)
+        self.lifestyleTypeDropDown = OptionMenu(options, self.lifestyleTypeChoices, *self.lifestyleTypeOptions) 
+        #TODO: Make into multi-select option to allow user to select from a range
+        self.lifestyleTypeDropDown.grid(row=5,column=self.middleStartColumn+1)
+
+
+
+
         # Culture
-        self.cultureOptions = ["Any","Male","Female","Nonbinary"]
         self.cultureChoice = StringVar()
         self.cultureChoice.set("Any")
 
         cultureLabel = Label(options,text="Name Culture",justify="left",anchor="w")
-        cultureLabel.grid(row=4,column=self.middleStartColumn,columnspan=3,sticky="w")
+        cultureLabel.grid(row=6,column=self.middleStartColumn,columnspan=3,sticky="w")
 
         anyRadio = Radiobutton(options,text="Any",variable=self.cultureChoice,value="Any")
-        anyRadio.grid(row=5,column=self.middleStartColumn)
+        anyRadio.grid(row=7,column=self.middleStartColumn)
 
         commonRadio = Radiobutton(options,text="Common",variable=self.cultureChoice,value="Common")
-        commonRadio.grid(row=5,column=self.middleStartColumn+1)
+        commonRadio.grid(row=7,column=self.middleStartColumn+1)
 
         traditionalRadio = Radiobutton(options,text="Traditional",variable=self.cultureChoice,value="Traditional")
-        traditionalRadio.grid(row=5,column=self.middleStartColumn+2)
+        traditionalRadio.grid(row=7,column=self.middleStartColumn+2)
 
+
+        # Buttons
         generateNPCButton = Button(options, text='Generate NPC',command=self.generateNPC)
         generateNPCButton.grid(row=10,column=self.middleStartColumn,columnspan=2)
 
@@ -150,6 +180,8 @@ class BetterNPCGenerator():
                     self.raceChoice.get(),
                     self.genderChoice.get(),
                     self.lifeStageChoice.get(),
+                    self.occupationTypeChoices.get(),
+                    self.lifestyleTypeChoices.get(),
                     self.cultureChoice.get()    )
 
         self.nameLabel.configure(text=npc.name[0] + " " + npc.name[1])
