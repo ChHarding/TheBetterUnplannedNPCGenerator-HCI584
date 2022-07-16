@@ -9,6 +9,7 @@ import csv
 class BetterNPCGenerator():
 
     presetsFilePath = "main\\resources\\presets\\"
+    occupationsFilePath = "main\\resources\\occupations"
     namesFilePath = "main\\resources\\names"
 
     leftStartColumn = 0
@@ -89,8 +90,11 @@ class BetterNPCGenerator():
         self.lifeStageDropDown.grid(row=3,column=self.middleStartColumn+1)
 
         # Occupation
+        
+        occupations =  os.listdir(self.occupationsFilePath)
         self.occupationTypeOptions = ["Any"]
-        #TODO: Load from a file
+        for occupation in occupations:
+            self.occupationTypeOptions.append(str.removesuffix(occupation,".csv"))
         self.occupationTypeChoices = StringVar()
         self.occupationTypeChoices.set("Any")
 
@@ -150,7 +154,7 @@ class BetterNPCGenerator():
         rightColumnTop = npcFrame
         rightColumnTop.grid(row=0,column=self.rightStartColumn,sticky='NWES') 
 
-        self.nameLabel = Label(npcFrame, text='Click "Generate NPC"',font='Arial 18 bold')
+        self.nameLabel = Label(npcFrame, text='Click "Generate NPC"',font='Arial 18 bold',width=20)
         self.nameLabel.grid(row=0,column=self.rightStartColumn)
         self.raceLabel = Label(npcFrame, text="Race: ")
         self.raceLabel.grid(row=1,column=self.rightStartColumn)
@@ -179,10 +183,12 @@ class BetterNPCGenerator():
         rightColumnBottom = npcHistory
         rightColumnBottom.grid(row=2,column=self.rightStartColumn,sticky='NWES') 
 
-        testList = ('NPC1', 'NPC2', 'NPC3', 'NPC4', 'NPC5')
+        self.npcHistoryList = []
 
-        Label(npcHistory, text='Last 5 NPCs Generated').grid(row=4,column=self.rightStartColumn)
-        Listbox(npcHistory,listvariable=testList).grid(row=5,column=self.rightStartColumn)
+        Label(npcHistory, text='Last 10 NPCs Generated').grid(row=4,column=self.rightStartColumn)
+        self.npcHistoryBox = Listbox(npcHistory)
+        self.npcHistoryBox.grid(row=5,column=self.rightStartColumn)
+        self.npcHistoryBox.bind("<<ListboxSelect>>", self.npcHistoryCallback)
 
 
 
@@ -198,6 +204,10 @@ class BetterNPCGenerator():
                     self.lifestyleTypeChoices.get(),
                     self.cultureChoice.get()    )
 
+        self.updateNPCUI(npc)
+
+
+    def updateNPCUI(self, npc):
         self.nameLabel.configure(text=npc.name[0] + " " + npc.name[1])
         self.raceLabel.configure(text="Race: " + npc.race)
         self.ageLabel.configure(text="Age: " + npc.age + " (" + npc.lifeStage + ")")
@@ -209,10 +219,29 @@ class BetterNPCGenerator():
         self.attribute1Label.configure(text=npc.att1Label + npc.att1Property)
         self.attribute2Label.configure(text=npc.att2Label + npc.att2Property)
         self.attribute3Label.configure(text=npc.att3Label + npc.att3Property)
+        self.updateNPCHistory(npc)
 
-    def updateNPCHistory(npc):
-        # Update the NPC History
-        return None
+    def updateNPCHistory(self, npc):
+        if (npc not in self.npcHistoryList):
+            if (len(self.npcHistoryList) >= 10):
+                self.npcHistoryList.pop()
+        else:
+            self.npcHistoryList.remove(npc)
+
+        self.npcHistoryList.insert(0,npc)
+
+        self.npcHistoryBox.delete(0,END)
+
+        for x, n in enumerate(self.npcHistoryList):
+            name = n.name[0] + " " + n.name[1]
+            self.npcHistoryBox.insert(x, name)
+
+    def npcHistoryCallback(self, event):
+        selection = event.widget.curselection()
+        if selection:
+            index = selection[0]
+            npc = self.npcHistoryList[index]
+            self.updateNPCUI(npc)
 
     def loadOptionsFromFile(self, optionsFileName):
         optionsPresetFile = open(optionsFileName)
