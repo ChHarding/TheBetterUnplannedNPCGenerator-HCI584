@@ -40,9 +40,8 @@ class BetterNPCGenerator():
         self.selectedPreset = StringVar()
         self.buildPresetsMenu(presets, "Default.csv")
 
-        # Label(selectPreset, text='Default').grid(row=0,column=self.leftStartColumn)
         # On Click of another preset in list: reload options
-        # File name will be [ "Race Traits - " + OptionName + ".csv" ] in resources>presets
+        # File name will be [ OptionName + ".csv" ] in resources>presets
 
 
 
