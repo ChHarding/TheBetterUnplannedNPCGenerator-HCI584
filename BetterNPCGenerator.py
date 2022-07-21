@@ -1,18 +1,17 @@
-from cProfile import label
 import os
+import csv
+
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
 
-from sqlalchemy import column
 from NPC import NPC
-import csv
 
 class BetterNPCGenerator():
 
-    presetsFilePath = "main\\resources\\presets\\"
-    occupationsFilePath = "main\\resources\\occupations"
-    namesFilePath = "main\\resources\\names"
+    presetsFilePath = "resources\\presets\\"
+    occupationsFilePath = "resources\\occupations"
+    namesFilePath = "resources\\names"
 
     leftStartColumn = 0
     middleStartColumn = 1

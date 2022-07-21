@@ -15,7 +15,7 @@ class NPC:
     # lifestyle # Options: Wretched, Squalid, Poor, Modest, Comfortable, Wealthy, Aristocratic
     # faith
 
-    namesFilePath = "main\\resources\\names\\"
+    namesFilePath = "resources\\names\\"
 
     def __init__(self, options, race, gender, lifeStage, occType, lifestyle, culture):
         self.options = options
