@@ -96,7 +96,7 @@ class NPC:
         self.skinLabel = raceTraits[11] + " Color: "
         self.skinColor = self.generateRandomTraitPipeDelimited(raceTraits[12])
 
-        self.height = self.generateHeight(raceTraits[19], raceTraits[20], self.gender, self.lifeStage)
+        self.height = self.generateHeight(raceTraits[19], raceTraits[20], self.genderCode, self.lifeStage)
         self.bodyType = random.choice(["Thin","Lean","Lanky","Slender","Petite","Athletic","Muscular","Heavy","Portly","Plump","Chubby","Big-Boned","Beefy","Well-Built"])
         #TODO: Implement loading body types from file
 
@@ -124,11 +124,11 @@ class NPC:
 
         # Get Random Name
         if (culture == "Traditional"):
-            self.name = self.getNameByRaceTradition(raceTraits[8],raceTraits[9],self.gender)
+            self.name = self.getNameByRaceTradition(raceTraits[8],raceTraits[9],self.genderCode)
         elif (culture == "Common"):
-            self.name = self.getCommonName(self.gender)
+            self.name = self.getCommonName(self.genderCode)
         else:
-            self.name = self.getTrueRandomName(self.gender)
+            self.name = self.getTrueRandomName(self.genderCode)
 
 
         self.buildDisplayText()
