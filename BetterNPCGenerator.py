@@ -1,3 +1,4 @@
+from ast import Num
 import os
 import csv
 
@@ -193,7 +194,7 @@ class BetterNPCGenerator():
         rightColumnBottom.grid(row=2,column=self.rightStartColumn,sticky='NWES') 
 
         Label(npcHistory, text='Last 10 NPCs Generated').grid(row=4,column=self.rightStartColumn)
-        self.npcHistoryBox = Listbox(npcHistory)
+        self.npcHistoryBox = Listbox(npcHistory,width=47,activestyle="none",font=('Courier New',8))
         self.npcHistoryBox.grid(row=5,column=self.rightStartColumn)
         self.npcHistoryBox.bind("<<ListboxSelect>>", self.recallNPC)
 
@@ -246,11 +247,12 @@ class BetterNPCGenerator():
 
         self.npcHistoryList.insert(0,npc)
 
+        # Clear and repopulate box
         self.npcHistoryBox.delete(0,END)
-
         for x, n in enumerate(self.npcHistoryList):
-            name = n.name[0] + " " + n.name[1]
+            name = n.nameDisplay[0:25] + self.spacer(n.nameDisplay, 25) + " | " + n.race + " " + n.gender
             self.npcHistoryBox.insert(x, name)
+        self.npcHistoryBox.select_set(0)
 
     def recallNPC(self, event):
         selection = event.widget.curselection()
@@ -258,6 +260,7 @@ class BetterNPCGenerator():
             index = selection[0]
             npc = self.npcHistoryList[index]
             self.updateNPCUI(npc)
+        self.npcHistoryBox.select_set(0)
 
     def saveNPC(self):
         npc = self.getCurrentNPC()
@@ -322,4 +325,14 @@ class BetterNPCGenerator():
     
     def refreshOptionsForm(self, options):
         self.raceDropDown.configure(values=options)
+
+
+    def spacer(self, text, width):
+        spaces = ""
+        num = width - len(text)
+
+        for _ in range(num):
+            spaces = spaces + " "
+
+        return spaces
 
