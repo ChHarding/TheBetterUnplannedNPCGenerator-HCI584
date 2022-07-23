@@ -12,15 +12,42 @@ class NPC:
     #gender = "" # male, female, nonbinary. Expanded gender options can be end-user configured.
     # physicalChars = ("eyeColor", "skinColor", "height", "build", "")
     # occupation
-    # lifestyle # Options: Wretched, Squalid, Poor, Modest, Comfortable, Wealthy, Aristocratic
-    # faith
 
     namesFilePath = "resources\\names\\"
 
-    def __init__(self, options, race, gender, lifeStage, occType, lifestyle, culture):
+    def __init__(self, options, race, gender, lifeStage, industry, profession, culture):
         self.options = options
+        self.npcDisplayText = []
+
+        self.gender = gender
+        self.lifeStage = lifeStage
+        self.industry = industry
+        self.profession = profession
+        self.culture = culture
+
+        self.nameDisplay = ""
+        self.occupationDisplay = "Occupation: "
+        self.raceDisplay = "Race: "
+        self.ageDisplay = "Age: "
+        self.genderDisplay = "Gender: "
+        self.heightDisplay = "Height: "
+        self.bodyTypeDisplay = "Body Type: "
+        self.eyeColorDisplay = "Eye Color: "
+        self.skinDisplay = ""
+        self.attribute1Display = ""
+        self.attribute2Display = ""
+        self.attribute3Display = ""
+
+        # Determine Occupation
+        if (profession == "Any"):
+            if (industry == "Any"):
+                self.industry = self.generateIndustry()
+            self.occupation = self.generateOccupation(self.industry)
+        else:
+            self.occupation = (industry, profession)
 
 
+        # Determine Race and Extract Racial Traits
         if (race == "Any"):
             self.race = self.generateRace()
         else:
@@ -37,8 +64,9 @@ class NPC:
             errorMessage = "Somehow you have selected a race option that doesn't exist, or I am a bad programmer."
             messagebox.showerror("NPC Generation Error", errorMessage)
             sys.exit(errorMessage)
+
         
-        #TODO: Need a better way to map these values. Maybe an object?
+        # Determine Life Stage and Age
         raceLifeStages = [  ("Child",raceTraits[2]),
                             ("Adolescent",raceTraits[3]),
                             ("Young Adult",raceTraits[4]),
@@ -46,25 +74,31 @@ class NPC:
                             ("Elder",raceTraits[6]),
                             ("Max",raceTraits[7])   ] # Maximum age possible, not its own lifeStage
 
-        self.eyeColor = self.generateRandomTraitPipeDelimited(raceTraits[10])
-
-        self.raceSkinLabel = raceTraits[11] + " Color: "
-        self.primaryColor = self.generateRandomTraitPipeDelimited(raceTraits[12])
-
-        if (gender != "Any"):
-            self.gender = gender[0:1]
-        else:
-            self.gender = self.generateGender()
-
         if (lifeStage == "Any"): # Child, Teenager, Young Adult, Adult, Elder
             self.lifeStage = self.generateLifeStage()
         else:
             self.lifeStage = lifeStage
+
+        self.age = str(self.getAge(raceLifeStages, self.lifeStage))
         
+
+        # Determine Gender
+        if (self.gender != "Any"):
+            self.gender = gender
+            self.genderCode = gender[0:1]
+        else:
+            self.generateGender()
+
+
+        # Determine Physical Characteristics
+        self.eyeColor = self.generateRandomTraitPipeDelimited(raceTraits[10])
+
+        self.skinLabel = raceTraits[11] + " Color: "
+        self.skinColor = self.generateRandomTraitPipeDelimited(raceTraits[12])
+
         self.height = self.generateHeight(raceTraits[19], raceTraits[20], self.gender, self.lifeStage)
         self.bodyType = random.choice(["Thin","Lean","Lanky","Slender","Petite","Athletic","Muscular","Heavy","Portly","Plump","Chubby","Big-Boned","Beefy","Well-Built"])
         #TODO: Implement loading body types from file
-
 
         if (raceTraits[13] != ""):
             self.att1Label = raceTraits[13] + ": "
@@ -88,8 +122,7 @@ class NPC:
             self.att3Property = ""
 
 
-        self.age = str(self.getAge(raceLifeStages, self.lifeStage))
-
+        # Get Random Name
         if (culture == "Traditional"):
             self.name = self.getNameByRaceTradition(raceTraits[8],raceTraits[9],self.gender)
         elif (culture == "Common"):
@@ -97,9 +130,24 @@ class NPC:
         else:
             self.name = self.getTrueRandomName(self.gender)
 
+
+        self.buildDisplayText()
+    
+
+
+
+
+    # Helper Methods #
+
     def generateRandomTraitPipeDelimited(self,traitString):
         traits = traitString.split("|")
         return random.choice(traits)
+
+    def generateIndustry(self):
+        return ""
+
+    def generateOccupation(self):
+        return ("","")
 
     def generateRace(self):
         race = random.choice(self.options)
@@ -107,7 +155,8 @@ class NPC:
         #TODO: Implement weighted selection
 
     def generateGender(self):
-        return random.choice(["M","F"]) 
+        self.gender = random.choice(["Male","Female"])
+        self.genderCode = self.gender[0:1]
         #TODO: Load from CSV to allow user to configure custom genders
 
     def generateLifeStage(self):
@@ -192,3 +241,30 @@ class NPC:
         fnTrads = ["Common","Draconic","Dwarvish","Elvish","Halfling","Orcish"]
         sTrads = ["Common","Draconic","Dwarvish","Elvish","Halfling"]
         return self.getNameByRaceTradition(random.choice(fnTrads), random.choice(sTrads), gender)
+
+    def buildDisplayText(self):
+        self.nameDisplay = self.name[0] + " " + self.name[1]
+        self.occupationDisplay = self.occupationDisplay + self.occupation[0] + " | " + self.occupation[1]
+        self.raceDisplay = self.raceDisplay + self.race
+        self.ageDisplay = self.ageDisplay + self.age + " (" + self.lifeStage + ")"
+        self.genderDisplay = self.genderDisplay + self.gender
+        self.heightDisplay = self.heightDisplay + self.height
+        self.bodyTypeDisplay = self.bodyTypeDisplay + self.bodyType
+        self.eyeColorDisplay = self.eyeColorDisplay + self.eyeColor
+        self.skinDisplay = self.skinLabel + self.skinColor
+        self.attribute1Display = self.att1Label + self.att1Property
+        self.attribute2Display = self.att2Label + self.att2Property
+        self.attribute3Display = self.att3Label + self.att3Property
+
+        self.npcDisplayText.append(self.nameDisplay)
+        self.npcDisplayText.append(self.occupationDisplay)
+        self.npcDisplayText.append(self.raceDisplay)
+        self.npcDisplayText.append(self.ageDisplay)
+        self.npcDisplayText.append(self.genderDisplay)
+        self.npcDisplayText.append(self.heightDisplay)
+        self.npcDisplayText.append(self.bodyTypeDisplay)
+        self.npcDisplayText.append(self.eyeColorDisplay)
+        self.npcDisplayText.append(self.skinDisplay)
+        self.npcDisplayText.append(self.attribute1Display)
+        self.npcDisplayText.append(self.attribute2Display)
+        self.npcDisplayText.append(self.attribute3Display)

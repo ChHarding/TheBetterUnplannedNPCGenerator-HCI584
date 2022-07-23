@@ -144,8 +144,8 @@ class BetterNPCGenerator():
         generateNPCButton = Button(options, text='Generate NPC',command=self.generateNPC)
         generateNPCButton.grid(row=10,column=self.middleStartColumn,columnspan=2)
 
-        savePresetButton = Button(options, text='Test Presets',command=self.buildPresetsMenu(presets, "Default.csv"))
-        savePresetButton.grid(row=10,column=self.middleStartColumn+1,columnspan=2)
+        #savePresetButton = Button(options, text='Test Presets',command=self.buildPresetsMenu(presets, "Default.csv"))
+        #savePresetButton.grid(row=10,column=self.middleStartColumn+1,columnspan=2)
 
 
 
@@ -158,30 +158,35 @@ class BetterNPCGenerator():
         rightColumnTop.grid(row=0,column=self.rightStartColumn,sticky='NWES') 
 
         self.nameLabel = Label(self.npcFrame, text='Click "Generate NPC"',font='Arial 18 bold',width=20)
-        self.nameLabel.grid(row=0,column=self.rightStartColumn)
-        self.raceLabel = Label(self.npcFrame, text="Race: ")
-        self.raceLabel.grid(row=1,column=self.rightStartColumn)
-        self.ageLabel = Label(self.npcFrame, text="Age: ")
-        self.ageLabel.grid(row=2,column=self.rightStartColumn)
-        self.genderLabel = Label(self.npcFrame, text="Gender: ")
-        self.genderLabel.grid(row=3,column=self.rightStartColumn)
-        self.heightLabel = Label(self.npcFrame, text="Height: ")
-        self.heightLabel.grid(row=4,column=self.rightStartColumn)
-        self.bodyTypeLabel = Label(self.npcFrame, text="Body Type: ")
-        self.bodyTypeLabel.grid(row=5,column=self.rightStartColumn)
+        self.nameLabel.grid(row=0,column=self.rightStartColumn,columnspan=2)
+        self.occupationLabel = Label(self.npcFrame)
+        self.occupationLabel.grid(row=1,column=self.rightStartColumn,columnspan=2)
+        self.raceLabel = Label(self.npcFrame)
+        self.raceLabel.grid(row=2,column=self.rightStartColumn,columnspan=2)
+        self.ageLabel = Label(self.npcFrame)
+        self.ageLabel.grid(row=3,column=self.rightStartColumn,columnspan=2)
+        self.genderLabel = Label(self.npcFrame)
+        self.genderLabel.grid(row=4,column=self.rightStartColumn,columnspan=2)
+        self.heightLabel = Label(self.npcFrame)
+        self.heightLabel.grid(row=5,column=self.rightStartColumn,columnspan=2)
+        self.bodyTypeLabel = Label(self.npcFrame)
+        self.bodyTypeLabel.grid(row=6,column=self.rightStartColumn,columnspan=2)
         self.eyeColorLabel = Label(self.npcFrame)
-        self.eyeColorLabel.grid(row=6,column=self.rightStartColumn)
+        self.eyeColorLabel.grid(row=7,column=self.rightStartColumn,columnspan=2)
         self.skinLabel = Label(self.npcFrame)
-        self.skinLabel.grid(row=7,column=self.rightStartColumn)
+        self.skinLabel.grid(row=8,column=self.rightStartColumn,columnspan=2)
         self.attribute1Label = Label(self.npcFrame)
-        self.attribute1Label.grid(row=8,column=self.rightStartColumn)
+        self.attribute1Label.grid(row=9,column=self.rightStartColumn,columnspan=2)
         self.attribute2Label = Label(self.npcFrame)
-        self.attribute2Label.grid(row=9,column=self.rightStartColumn)
+        self.attribute2Label.grid(row=10,column=self.rightStartColumn,columnspan=2)
         self.attribute3Label = Label(self.npcFrame)
-        self.attribute3Label.grid(row=10,column=self.rightStartColumn)
+        self.attribute3Label.grid(row=11,column=self.rightStartColumn,columnspan=2)
 
-        exportNPCButton = Button(self.npcFrame, text='Export NPC', command=self.saveNPC)
-        exportNPCButton.grid(row=20,column=self.rightStartColumn)
+        exportNPCButton = Button(self.npcFrame, text='Export to File', command=self.saveNPC, width=20)
+        exportNPCButton.grid(row=20,column=self.rightStartColumn,padx=5, pady=5, ipadx=5, ipady=5)
+
+        copyNPCButton = Button(self.npcFrame, text='Copy to Clipboard', command=self.copyNPC, width=20)
+        copyNPCButton.grid(row=20,column=self.rightStartColumn+1, padx=(0,5), pady=5, ipadx=5, ipady=5)
 
         npcHistory = LabelFrame(self.root, text='History')
         rightColumnBottom = npcHistory
@@ -190,11 +195,16 @@ class BetterNPCGenerator():
         Label(npcHistory, text='Last 10 NPCs Generated').grid(row=4,column=self.rightStartColumn)
         self.npcHistoryBox = Listbox(npcHistory)
         self.npcHistoryBox.grid(row=5,column=self.rightStartColumn)
-        self.npcHistoryBox.bind("<<ListboxSelect>>", self.npcHistoryCallback)
+        self.npcHistoryBox.bind("<<ListboxSelect>>", self.recallNPC)
 
 
 
         self.root.mainloop()
+
+
+
+
+     # Helper Methods #   
 
     def generateNPC(self):
 
@@ -203,27 +213,29 @@ class BetterNPCGenerator():
                     self.genderChoice.get(),
                     self.lifeStageChoice.get(),
                     self.occupationTypeChoices.get(),
-                    self.lifestyleTypeChoices.get(),
+                    "", #profession
                     self.cultureChoice.get()    )
 
         self.updateNPCUI(npc)
 
-
     def updateNPCUI(self, npc):
-        self.currentNPC = npc
-        self.nameLabel.configure(text=npc.name[0] + " " + npc.name[1])
-        self.raceLabel.configure(text="Race: " + npc.race)
-        self.ageLabel.configure(text="Age: " + npc.age + " (" + npc.lifeStage + ")")
-        self.genderLabel.configure(text="Gender: " + npc.gender)
-        self.heightLabel.configure(text="Height: " + npc.height)
-        self.bodyTypeLabel.configure(text="Body Type: " + npc.bodyType)
-        self.eyeColorLabel.configure(text="Eye Color: " + npc.eyeColor)
-        self.skinLabel.configure(text=npc.raceSkinLabel + npc.primaryColor)
-        self.attribute1Label.configure(text=npc.att1Label + npc.att1Property)
-        self.attribute2Label.configure(text=npc.att2Label + npc.att2Property)
-        self.attribute3Label.configure(text=npc.att3Label + npc.att3Property)
-        self.updateNPCHistory(npc)
 
+        self.currentNPC = npc
+
+        self.nameLabel.configure(text=npc.nameDisplay)
+        self.occupationLabel.configure(text=npc.occupationDisplay)
+        self.raceLabel.configure(text=npc.raceDisplay)
+        self.ageLabel.configure(text=npc.ageDisplay)
+        self.genderLabel.configure(text=npc.genderDisplay)
+        self.heightLabel.configure(text=npc.heightDisplay)
+        self.bodyTypeLabel.configure(text=npc.bodyTypeDisplay)
+        self.eyeColorLabel.configure(text=npc.eyeColorDisplay)
+        self.skinLabel.configure(text=npc.skinDisplay)
+        self.attribute1Label.configure(text=npc.attribute1Display)
+        self.attribute2Label.configure(text=npc.attribute2Display)
+        self.attribute3Label.configure(text=npc.attribute3Display)
+
+        self.updateNPCHistory(npc)
 
     def updateNPCHistory(self, npc):
         if (npc not in self.npcHistoryList):
@@ -240,12 +252,58 @@ class BetterNPCGenerator():
             name = n.name[0] + " " + n.name[1]
             self.npcHistoryBox.insert(x, name)
 
-    def npcHistoryCallback(self, event):
+    def recallNPC(self, event):
         selection = event.widget.curselection()
         if selection:
             index = selection[0]
             npc = self.npcHistoryList[index]
             self.updateNPCUI(npc)
+
+    def saveNPC(self):
+        npc = self.getCurrentNPC()
+        if (npc == NONE):
+            return
+
+        file = filedialog.asksaveasfilename(filetypes=[("txt file", ".txt")],defaultextension=".txt", initialfile=npc.nameDisplay)
+        if file:  # user selected file
+            fob = open(file, 'w')
+            for line in npc.npcDisplayText:
+                fob.write(line + '\n')
+            fob.close()
+
+    def copyNPC(self):
+        npc = self.getCurrentNPC()
+        if (npc == NONE):
+            return
+
+        self.root.clipboard_clear
+        for line in npc.npcDisplayText:
+            self.root.clipboard_append(line + "\n")
+        
+        messagebox.showinfo("NPC Copied", npc.nameDisplay + " has been copied to the clipboard.")
+
+
+    def getCurrentNPC(self):
+        if (len(self.npcHistoryList) == 0):
+            errorMessage = "No NPCs currently loaded."
+            messagebox.showerror("NPC Save Error", errorMessage)
+            return NONE
+        else:
+            return self.npcHistoryList[0]
+    
+    
+    def buildPresetsMenu(self, values, select):
+        for item in self.selectPreset.winfo_children():
+            item.destroy()
+        displayRow = 0
+        for text in values:
+            radio = Radiobutton(self.selectPreset, text = str.removesuffix(text,".csv"), variable = self.selectedPreset,
+                value = text, indicator = 0,
+                background = "light blue")
+            radio.grid(row=displayRow,column=self.leftStartColumn)
+            displayRow = displayRow + 1
+        self.selectedPreset.set(select)
+            
 
     def loadOptionsFromFile(self, optionsFileName):
         optionsPresetFile = open(optionsFileName)
@@ -261,50 +319,7 @@ class BetterNPCGenerator():
         optionsPresetFile.close()
 
         return raceTraits
-        
-    def saveNPC(self):
-        npc = NONE
-        if (len(self.npcHistoryList) == 0):
-            errorMessage = "No NPCs currently loaded."
-            messagebox.showerror("NPC Save Error", errorMessage)
-            return
-        else:
-            npc = self.npcHistoryList[0]
-
-        name = npc.name[0] + " " + npc.name[1]
-
-        file = filedialog.asksaveasfilename(filetypes=[("txt file", ".txt")],defaultextension=".txt", initialfile=name)
-        if file:  # user selected file
-            fob = open(file, 'w')
-            fob.write(name + '\n')
-            fob.write("Race: " + npc.race + '\n')
-            fob.write("Age: " + npc.age + " (" + npc.lifeStage + ")" + '\n')
-            fob.write("Gender: " + npc.gender + '\n')
-            fob.write("Height: " + npc.height + '\n')
-            fob.write("Body Type: " + npc.bodyType + '\n')
-            fob.write("Eye Color: " + npc.eyeColor + '\n')
-            fob.write(npc.raceSkinLabel + npc.primaryColor + '\n')
-            fob.write(npc.att1Label + npc.att1Property + '\n')
-            fob.write(npc.att2Label + npc.att2Property + '\n')
-            fob.write(npc.att3Label + npc.att3Property)
-            fob.close()
-        else: # user cancel the file browser window
-            print("No file chosen")  
-
+    
     def refreshOptionsForm(self, options):
         self.raceDropDown.configure(values=options)
-    
-    def buildPresetsMenu(self, values, select):
-        for item in self.selectPreset.winfo_children():
-            item.destroy()
-        displayRow = 0
-        for text in values:
-            radio = Radiobutton(self.selectPreset, text = str.removesuffix(text,".csv"), variable = self.selectedPreset,
-                value = text, indicator = 0,
-                background = "light blue")
-            radio.grid(row=displayRow,column=self.leftStartColumn)
-            displayRow = displayRow + 1
-        self.selectedPreset.set(select)
-            
-
 
