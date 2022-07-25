@@ -29,9 +29,6 @@ class BetterNPCGenerator():
         self.raceTraitsOptions = self.loadOptionsFromCsv(self.presetsFilePath + defaultOptionsFileName, TRUE)
         
         self.npcHistoryList = []
-
-        self.headerFont = font.Font(family="Century Schoolbook", size=10, weight="bold")
-        self.buttonFont = font.Font(family="Century Schoolbook", size=10)
     
         # Primary Colors
         inkBlack = "#27221f"
@@ -39,14 +36,14 @@ class BetterNPCGenerator():
         lightParchment = "#f5f0e5"
         parchment = "#f0e6d1"
         darkParchment = "#efdfbb"
-        darkerParchment = "#eae0c8"
 
         # Accent Colors
         lycheeRed = "#bb2f43"
-        libertyBlue = "#545aa7"
+        ashGray = "#6f7678"
 
-        self.textColor = inkBlack
-        self.backgroundColor = lightParchment
+        # Assigned Colors
+        self.defaultTextColor = inkBlack
+        self.defaultBackgroundColor = lightParchment
 
         self.buttonColor = lycheeRed
         self.buttonTextColor = veryLightParchment
@@ -59,14 +56,19 @@ class BetterNPCGenerator():
         self.dropDownColor = darkParchment
         self.dropDownHoverColor = parchment
         self.dropDownTextColor = inkBlack
-        self.dropDownExpandedHoverColor = libertyBlue
+        self.dropDownExpandedHoverColor = ashGray
         self.dropDownExpandedHoverTextColor = veryLightParchment
 
         self.npcNameColor = lycheeRed
 
         self.npcHistoryColor = veryLightParchment
-        self.npcHistorySelectColor = libertyBlue
+        self.npcHistorySelectColor = ashGray
         self.npcHistorySelectTextColor = veryLightParchment
+
+        # Fonts
+
+        self.headerFont = font.Font(family="Century Schoolbook", size=10, weight="bold")
+        self.buttonFont = font.Font(family="Century Schoolbook", size=10, weight="bold")
 
         self.generateButtonFont = font.Font(family="Century Schoolbook", size=12, weight="bold")
 
@@ -81,14 +83,14 @@ class BetterNPCGenerator():
 
         self.historyTextFont = font.Font(family="Century Gothic", size=9)
 
-        self.root.configure(bg=self.backgroundColor)
+        self.root.configure(bg=self.defaultBackgroundColor)
 
         # ==================== #
         # Left Column: Presets #
         # ==================== #
 
         # Set up 3 Column structure
-        self.selectPreset = LabelFrame(self.root, text="Presets", font=self.headerFont,background=self.backgroundColor, foreground=self.textColor)
+        self.selectPreset = LabelFrame(self.root, text="Presets", font=self.headerFont,background=self.defaultBackgroundColor, foreground=self.defaultTextColor)
         leftColumn = self.selectPreset
         leftColumn.grid(row=0, column=self.leftStartColumn, rowspan=50, padx=5, pady=5, ipady=5, sticky='NWES') 
 
@@ -111,11 +113,11 @@ class BetterNPCGenerator():
 
         self.optionsRowCounter = 0
 
-        self.options = LabelFrame(self.root, text="Options", font=self.headerFont,background=self.backgroundColor, foreground=self.textColor)
+        self.options = LabelFrame(self.root, text="Options", font=self.headerFont,background=self.defaultBackgroundColor, foreground=self.defaultTextColor)
         middleColumn = self.options
         middleColumn.grid(row=0, column=self.middleStartColumn, rowspan=50, columnspan=3, padx=5, pady=5, sticky="NWES") 
 
-        optionsInstructions = Label(self.options, text='Choose your options, then click "Generate NPC"', font=self.optionsTextFont, background=self.backgroundColor, foreground=self.textColor)
+        optionsInstructions = Label(self.options, text='Choose your options, then click "Generate NPC"', font=self.optionsTextFont, background=self.defaultBackgroundColor, foreground=self.defaultTextColor)
         optionsInstructions.grid(row=self.optionsRowCounter,column=self.middleStartColumn,columnspan=3, pady=(10,5))
 
         self.optionsRowCounter += 1
@@ -191,7 +193,7 @@ class BetterNPCGenerator():
 
         self.npcDisplayRowCount = 0
 
-        self.npcFrame = LabelFrame(self.root, text='NPC', font=self.headerFont, background=self.backgroundColor, foreground=self.textColor)
+        self.npcFrame = LabelFrame(self.root, text='NPC', font=self.headerFont, background=self.defaultBackgroundColor, foreground=self.defaultTextColor)
         rightColumnTop = self.npcFrame
         rightColumnTop.grid(row=self.npcDisplayRowCount,column=self.rightStartColumn, sticky='NWES', padx=5, pady=5) 
 
@@ -220,12 +222,12 @@ class BetterNPCGenerator():
 
 
         # NPC History Panel
-        npcHistory = LabelFrame(self.root, text='History', font=self.headerFont, background=self.backgroundColor, foreground=self.textColor)
+        npcHistory = LabelFrame(self.root, text='History', font=self.headerFont, background=self.defaultBackgroundColor, foreground=self.defaultTextColor)
         rightColumnBottom = npcHistory
-        rightColumnBottom.grid(row=2,column=self.rightStartColumn,columnspan=3, sticky='NWES', padx=5, pady=5) 
+        rightColumnBottom.grid(row=2,column=self.rightStartColumn,sticky='NWES', padx=5, pady=5) 
 
-        Label(npcHistory, text='Last 10 NPCs Generated', font=self.historyTextFont, background=self.backgroundColor).grid(row=4,column=self.rightStartColumn,pady=(5,0))
-        self.npcHistoryBox = Listbox(npcHistory,activestyle="none",font=('Courier New',9,'bold'),width=39,height=10,borderwidth=0,background=self.npcHistoryColor,foreground=self.textColor,selectbackground=self.npcHistorySelectColor,selectforeground=self.npcHistorySelectTextColor)
+        Label(npcHistory, text='Last 10 NPCs Generated', font=self.historyTextFont, background=self.defaultBackgroundColor).grid(row=4,column=self.rightStartColumn,pady=(5,0))
+        self.npcHistoryBox = Listbox(npcHistory,activestyle="none",font=('Courier New',10),width=38,height=10,borderwidth=0,background=self.npcHistoryColor,foreground=self.defaultTextColor,selectbackground=self.npcHistorySelectColor,selectforeground=self.npcHistorySelectTextColor)
         self.npcHistoryBox.grid(column=self.rightStartColumn, columnspan=3,sticky="ew", pady=5, padx=5, ipadx=5, ipady=5)
         self.npcHistoryBox.bind("<<ListboxSelect>>", self.recallNPC)
 
@@ -237,7 +239,7 @@ class BetterNPCGenerator():
      # Helper Methods #   
 
     def configureOptionsLabel(self, labelText, padding=(5,5,2,2)):
-        label = Label(self.options, text=labelText, justify="left", anchor="w", font=self.optionsLabelFont, background=self.backgroundColor, foreground=self.textColor)
+        label = Label(self.options, text=labelText, justify="left", anchor="w", font=self.optionsLabelFont, background=self.defaultBackgroundColor, foreground=self.defaultTextColor)
         label.grid(row=self.optionsRowCounter, column=self.middleStartColumn, sticky="w", padx=padding[0], pady=padding[1], ipadx=padding[2], ipady=padding[3])
 
     def configureOptionsDropDownMenu(self, labelText, variable, menuOptions, command=""):
@@ -258,7 +260,7 @@ class BetterNPCGenerator():
         return menu
 
     def configureRadioOption(self, radioFrame, text, variable, value):
-        radio = Radiobutton(radioFrame, text=text, variable=variable, value=value, font=self.optionsTextFont, background=self.backgroundColor)
+        radio = Radiobutton(radioFrame, text=text, variable=variable, value=value, font=self.optionsTextFont, background=self.defaultBackgroundColor)
         radio.pack(side="left",anchor="w")
 
     def configureRadioOptions(self, frame, variable, options):
@@ -268,6 +270,12 @@ class BetterNPCGenerator():
         else:
             for option in options:
                 self.configureRadioOption(frame, option, variable, option)
+
+    def configureNPCDisplayField(self):
+        label = Label(self.npcFrame, background=self.defaultBackgroundColor, font=self.npcDisplayFont, foreground=self.defaultTextColor)
+        label.grid(row=self.npcDisplayRowCount,column=self.rightStartColumn,columnspan=2)
+        self.npcDisplayRowCount += 1
+        return label
 
     def buildPresetsMenu(self, values, select):
         for item in self.selectPreset.winfo_children():
@@ -286,12 +294,6 @@ class BetterNPCGenerator():
             radio.grid(row=displayRow,column=self.leftStartColumn,sticky="ew", padx=5, pady=2, ipadx=7, ipady=2)
             displayRow += 1
         self.selectedPreset.set(select)
-
-    def configureNPCDisplayField(self):
-        label = Label(self.npcFrame, background=self.backgroundColor, font=self.npcDisplayFont, foreground=self.textColor)
-        label.grid(row=self.npcDisplayRowCount,column=self.rightStartColumn,columnspan=2)
-        self.npcDisplayRowCount += 1
-        return label
 
 
 
@@ -316,6 +318,9 @@ class BetterNPCGenerator():
         return items
 
 
+    def updateProfessions(self,filePath):
+
+        professions = self.loadOptionsFromCsv(filePath)
 
 
 
