@@ -157,7 +157,7 @@ class BetterNPCGenerator():
         self.occupationTypeChoice = StringVar()
         self.occupationTypeChoice.set("Any")
 
-        self.occupationTypeDropDown = self.configureOptionsDropDownMenu("Occupation Type", self.occupationTypeChoice, self.occupationTypeOptions, )
+        self.occupationTypeDropDown = self.configureOptionsDropDownMenu("Occupation Type", self.occupationTypeChoice, self.occupationTypeOptions, self.updateProfessions)
 
         # Profession
         self.professionTypeOptions = ["Any"]
@@ -318,11 +318,21 @@ class BetterNPCGenerator():
         return items
 
 
-    def updateProfessions(self,filePath):
+    def updateProfessions(self, selection):
+        if (selection != "Any"):
+            self.professionTypeOptions = self.loadOptionsFromCsv(self.occupationTypesFilePath + "\\" + selection + ".csv")
+            self.updateOptionsMenu(self.professionTypeDropDown, self.professionTypeChoice, self.professionTypeOptions)#.configure(self.options, self.professionTypeChoice, *self.professionTypeOptions)            
+            self.professionTypeDropDown.configure(state=ACTIVE)
+        else:
+            self.professionTypeDropDown.configure(state=DISABLED)
+        self.professionTypeChoice.set("Any")
 
-        professions = self.loadOptionsFromCsv(filePath)
-
-
+    def updateOptionsMenu(self, optionMenu, variable, newOptions):
+        menu = optionMenu["menu"]
+        menu.delete(0, "end")
+        for string in newOptions:
+            menu.add_command(label=string[0], 
+                             command=lambda value=string[0]: variable.set(value))
 
     def generateNPC(self):
 
@@ -331,7 +341,7 @@ class BetterNPCGenerator():
                     self.genderChoice.get(),
                     self.lifeStageChoice.get(),
                     self.occupationTypeChoice.get(),
-                    "", #profession
+                    self.professionTypeChoice.get(),
                     self.cultureChoice.get()    )
 
         self.updateNPCUI(npc)
