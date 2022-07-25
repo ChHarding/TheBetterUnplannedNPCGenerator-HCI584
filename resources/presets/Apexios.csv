@@ -1,0 +1,8 @@
+Race,Generation Weight,Child,Adolescent,Young Adult,Adult,Elder,Max Age,First Name Tradition,Surname Tradition,Eye Color,Skin/Scale/Fur,Skin/Scale/Fur Color,Accent Type,Accent Trait,Accent 2 Type,Accent 2 Trait,Accent 3 Type,Accent 3 Trait,Height Min,Height Max
+Human,10,4,13,18,35,60,100,Common,Common,Amber|Blue|Brown|Gray|Green|Hazel|Red|Violet|White,Skin,Dusky Brown|Tawny|Fair|Amber|Bronze|Dark Mahogany,Hair Color,Blonde|Sandy Blonde|Light Brown|Medium Brown|Dark Brown|Black|Red,,,,,54,80
+Half-Elf,5,4,13,18,95,140,180,Common,Elvish,Amber|Violet|Brown|Emerald|Blue|Red,Skin,Golden|Pale White|Copper|Dark Purple|Olive|Red|Bronze,Hair Color,Blonde|Sandy Blonde|Light Brown|Medium Brown|Dark Brown|Black|Red,,,,,50,76
+Half-Orc,3,3,9,14,25,50,80,Orcish,Common,Gray|Black|Green,Skin,Gray|Green,Hair Color,Black|Gray,,,,,60,84
+Elf,5,5,15,100,300,500,700,Elvish,Elvish,Brown|Hazel|Emerald|Blue|Red,Skin,Golden|Pale White|Copper|Dark Purple|Olive|Red|Bronze,Hair Color,White|Silver|Blonde|Light Blue|Black,,,,,48,70
+Dwarf,75,4,13,50,200,300,350,Dwarvish,Dwarvish,Amber|Blue|Brown|Gray|Green|Hazel,Skin,Tawny|Fair|Tanned|Mahogany,Hair Color,Blonde|Sandy Blonde|Light Brown|Medium Brown|Dark Brown|Black|Red,,,,,48,60
+Halfling,1,4,13,20,100,200,250,Halfling,Halfling,Amber|Blue|Brown|Gray|Green|Hazel,Skin,Tanned|Fair,Hair Color,Blonde|Sandy Blonde|Light Brown|Medium Brown|Dark Brown|Black|Red,,,,,30,42
+Dragonborn,1,1,5,15,30,50,80,Draconic,Draconic,Light Red|Red|Orange|Gold|Amber,Scale,Red|Blue|Green|Black|White|Copper|Brass|Silver|Gold|Bronze|Amethyst|Crystal|Emerald|Sapphire|Topaz,,,,,,,72,96
