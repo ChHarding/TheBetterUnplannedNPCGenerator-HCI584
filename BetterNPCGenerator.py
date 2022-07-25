@@ -330,6 +330,8 @@ class BetterNPCGenerator():
     def updateOptionsMenu(self, optionMenu, variable, newOptions):
         menu = optionMenu["menu"]
         menu.delete(0, "end")
+        menu.add_command(label="Any", 
+                             command=lambda value="Any": variable.set(value))
         for string in newOptions:
             menu.add_command(label=string[0], 
                              command=lambda value=string[0]: variable.set(value))
