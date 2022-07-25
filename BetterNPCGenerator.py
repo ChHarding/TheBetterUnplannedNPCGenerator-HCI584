@@ -1,17 +1,17 @@
-from ast import Num
 import os
 import csv
 
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
+from tkinter import font
 
 from NPC import NPC
 
 class BetterNPCGenerator():
 
     presetsFilePath = "resources\\presets\\"
-    occupationsFilePath = "resources\\occupations"
+    occupationTypesFilePath = "resources\\occupations"
     namesFilePath = "resources\\names"
 
     leftStartColumn = 0
@@ -27,14 +27,20 @@ class BetterNPCGenerator():
         self.raceTraitsOptions = self.loadOptionsFromFile(self.presetsFilePath + "Default.csv")
         self.npcHistoryList = []
 
+        self.headerFont = font.Font(family="Century Schoolbook", size=10, weight="bold")
+
+        self.optionsLabelFont = font.Font(family="Century Schoolbook", size=10, weight="bold")
+        self.optionsMenuFont = font.Font(family="Century Gothic", size=9)
+        self.optionsTextFont = font.Font(family="Centure Gothic", size=11)
+
         # ==================== #
         # Left Column: Presets #
         # ==================== #
 
         # Set up 3 Column structure
-        self.selectPreset = LabelFrame(self.root, text='Select Preset')
+        self.selectPreset = LabelFrame(self.root, text='Select Preset', font=self.headerFont)
         leftColumn = self.selectPreset
-        leftColumn.grid(row=0, column=self.leftStartColumn, rowspan=2, padx=5, pady=5, ipadx=5, ipady=5, sticky='NWES') 
+        leftColumn.grid(row=0, column=self.leftStartColumn, rowspan=50, padx=5, pady=5, ipadx=5, ipady=5, sticky='NWES') 
 
         presets = os.listdir(self.presetsFilePath)
 
@@ -50,12 +56,16 @@ class BetterNPCGenerator():
         # Middle Column: Options #
         # ====================== #
 
-        options = LabelFrame(self.root, text='Options')
-        middleColumn = options
-        middleColumn.grid(row=0, column=self.middleStartColumn, columnspan=2, padx=5, pady=5, ipadx=5, ipady=5, sticky='NWES') 
+        self.optionsRowCounter = 0
 
-        optionsInstructions = Label(options, text='Choose your options, then click "Generate NPC"')
-        optionsInstructions.grid(row=0,column=self.middleStartColumn,columnspan=3)
+        self.options = LabelFrame(self.root, text="Options", font=self.headerFont)
+        middleColumn = self.options
+        middleColumn.grid(row=0, column=self.middleStartColumn, rowspan=50, columnspan=3, padx=5, pady=5, ipadx=5, ipady=5, sticky="NWES") 
+
+        optionsInstructions = Label(self.options, text='Choose your options, then click "Generate NPC"', font=self.optionsTextFont)
+        optionsInstructions.grid(row=self.optionsRowCounter,column=self.middleStartColumn,columnspan=3)
+
+        self.optionsRowCounter += 1
 
         # Race
         self.raceOptions = ["Any"]
@@ -65,10 +75,7 @@ class BetterNPCGenerator():
         self.raceChoice = StringVar()
         self.raceChoice.set("Any")
 
-        raceDropDownLabel = Label(options,text="Race")
-        raceDropDownLabel.grid(row=1,column=self.middleStartColumn)
-        self.raceDropDown = OptionMenu(options, self.raceChoice, *self.raceOptions)
-        self.raceDropDown.grid(row=1,column=self.middleStartColumn+1)
+        self.raceDropDown = self.configureOptionsDropDownMenu("Race", self.raceChoice, self.raceOptions)
 
         # Gender
         self.genderOptions = ["Any","Male","Female","Nonbinary"]
@@ -76,10 +83,7 @@ class BetterNPCGenerator():
         self.genderChoice = StringVar()
         self.genderChoice.set("Any")
 
-        genderDropDownLabel = Label(options,text="Gender")
-        genderDropDownLabel.grid(row=2,column=self.middleStartColumn)
-        self.genderDropDown = OptionMenu(options, self.genderChoice, *self.genderOptions)
-        self.genderDropDown.grid(row=2,column=self.middleStartColumn+1)
+        self.genderDropDown = self.configureOptionsDropDownMenu("Gender", self.genderChoice, self.genderOptions)
 
         # Life Stage 
         self.lifeStageOptions = ["Any","Child","Adolescent","Young Adult","Adult","Elder"] 
@@ -87,66 +91,44 @@ class BetterNPCGenerator():
         self.lifeStageChoice = StringVar()
         self.lifeStageChoice.set("Any")
 
-        lifeStageDropDownLabel = Label(options,text="Life Stage")
-        lifeStageDropDownLabel.grid(row=3,column=self.middleStartColumn)
-        self.lifeStageDropDown = OptionMenu(options, self.lifeStageChoice, *self.lifeStageOptions) 
-        #TODO: Make into multi-select option to allow user to select from a range
-        self.lifeStageDropDown.grid(row=3,column=self.middleStartColumn+1)
+        self.lifeStageDropDown = self.configureOptionsDropDownMenu("Life Stage", self.lifeStageChoice, self.lifeStageOptions)
+
 
         # Occupation
-        
-        occupations =  os.listdir(self.occupationsFilePath)
+        occupations =  os.listdir(self.occupationTypesFilePath)
         self.occupationTypeOptions = ["Any"]
         for occupation in occupations:
             self.occupationTypeOptions.append(str.removesuffix(occupation,".csv"))
-        self.occupationTypeChoices = StringVar()
-        self.occupationTypeChoices.set("Any")
+        self.occupationTypeChoice = StringVar()
+        self.occupationTypeChoice.set("Any")
 
-        occupationTypeDropDownLabel = Label(options,text="Occupation Type")
-        occupationTypeDropDownLabel.grid(row=4,column=self.middleStartColumn)
-        self.occupationTypeDropDown = OptionMenu(options, self.occupationTypeChoices, *self.occupationTypeOptions) 
-        #TODO: Make into multi-select option to allow user to select from a range
-        self.occupationTypeDropDown.grid(row=4,column=self.middleStartColumn+1)
+        self.occupationTypeDropDown = self.configureOptionsDropDownMenu("Occupation Type", self.occupationTypeChoice, self.occupationTypeOptions, )
 
+        # Profession
+        self.professionTypeOptions = ["Any"]
+        self.professionTypeChoice = StringVar()
+        self.professionTypeChoice.set("Any")
 
-        # Lifestyle
-        self.lifestyleTypeOptions = ["Any"]
-        #TODO: Load from a file
-        self.lifestyleTypeChoices = StringVar()
-        self.lifestyleTypeChoices.set("Any")
-
-        lifestyleTypeDropDownLabel = Label(options,text="Lifestyle")
-        lifestyleTypeDropDownLabel.grid(row=5,column=self.middleStartColumn)
-        self.lifestyleTypeDropDown = OptionMenu(options, self.lifestyleTypeChoices, *self.lifestyleTypeOptions) 
-        #TODO: Make into multi-select option to allow user to select from a range
-        self.lifestyleTypeDropDown.grid(row=5,column=self.middleStartColumn+1)
-
-
+        self.professionTypeDropDown = self.configureOptionsDropDownMenu("Profession", self.professionTypeChoice, self.professionTypeOptions)
+        self.professionTypeDropDown.configure(state=DISABLED)
 
 
         # Culture
         self.cultureChoice = StringVar()
         self.cultureChoice.set("Any")
 
-        cultureLabel = Label(options,text="Name Culture",justify="left",anchor="w")
-        cultureLabel.grid(row=6,column=self.middleStartColumn,columnspan=3,sticky="w")
+        self.configureOptionsLabel("Name Culture")
+        self.optionsRowCounter += 1
 
-        anyRadio = Radiobutton(options,text="Any",variable=self.cultureChoice,value="Any")
-        anyRadio.grid(row=7,column=self.middleStartColumn)
-
-        commonRadio = Radiobutton(options,text="Common",variable=self.cultureChoice,value="Common")
-        commonRadio.grid(row=7,column=self.middleStartColumn+1)
-
-        traditionalRadio = Radiobutton(options,text="Traditional",variable=self.cultureChoice,value="Traditional")
-        traditionalRadio.grid(row=7,column=self.middleStartColumn+2)
+        self.cultureChoicesFrame = Frame(self.options)
+        self.cultureChoicesFrame.grid(row=self.optionsRowCounter,column=self.middleStartColumn,columnspan=3)
+        self.configureRadioOptions(self.cultureChoicesFrame, self.cultureChoice, ["Any","Common","Traditional"])
+        self.optionsRowCounter += 1
 
 
         # Buttons
-        generateNPCButton = Button(options, text='Generate NPC',command=self.generateNPC)
-        generateNPCButton.grid(row=10,column=self.middleStartColumn,columnspan=2)
-
-        #savePresetButton = Button(options, text='Test Presets',command=self.buildPresetsMenu(presets, "Default.csv"))
-        #savePresetButton.grid(row=10,column=self.middleStartColumn+1,columnspan=2)
+        generateNPCButton = Button(self.options, text='Generate NPC',command=self.generateNPC,width=15,font=("Arial",12,"bold"))
+        generateNPCButton.grid(row=self.optionsRowCounter,column=self.middleStartColumn,columnspan=3, padx=5, pady=5, ipadx=5, ipady=5)
 
 
 
@@ -154,9 +136,9 @@ class BetterNPCGenerator():
         # Right Column: NPC Display #
         # ========================= #
 
-        self.npcFrame = LabelFrame(self.root, text='NPC')
+        self.npcFrame = LabelFrame(self.root, text='NPC', font=self.headerFont)
         rightColumnTop = self.npcFrame
-        rightColumnTop.grid(row=0,column=self.rightStartColumn,sticky='NWES') 
+        rightColumnTop.grid(row=0,column=self.rightStartColumn,sticky='NWES', padx=5, pady=5, ipadx=5, ipady=5) 
 
         self.nameLabel = Label(self.npcFrame, text='Click "Generate NPC"',font='Arial 18 bold',width=20)
         self.nameLabel.grid(row=0,column=self.rightStartColumn,columnspan=2)
@@ -189,9 +171,11 @@ class BetterNPCGenerator():
         copyNPCButton = Button(self.npcFrame, text='Copy to Clipboard', command=self.copyNPC, width=20)
         copyNPCButton.grid(row=20,column=self.rightStartColumn+1, padx=(0,5), pady=5, ipadx=5, ipady=5)
 
+
+        # NPC History Panel
         npcHistory = LabelFrame(self.root, text='History')
         rightColumnBottom = npcHistory
-        rightColumnBottom.grid(row=2,column=self.rightStartColumn,sticky='NWES') 
+        rightColumnBottom.grid(row=2,column=self.rightStartColumn,sticky='NWES', padx=5, pady=5, ipadx=5, ipady=5) 
 
         Label(npcHistory, text='Last 10 NPCs Generated').grid(row=4,column=self.rightStartColumn)
         self.npcHistoryBox = Listbox(npcHistory,width=47,activestyle="none",font=('Courier New',8))
@@ -207,13 +191,47 @@ class BetterNPCGenerator():
 
      # Helper Methods #   
 
+    def configureOptionsLabel(self, labelText):
+        label = Label(self.options, text=labelText, justify="left", anchor="w", font=self.optionsLabelFont)
+        label.grid(row=self.optionsRowCounter, column=self.middleStartColumn, sticky="w", padx=5, pady=5, ipadx=5, ipady=5)
+
+    def configureOptionsDropDownMenu(self, labelText, variable, menuOptions, command=""):
+        self.configureOptionsLabel(labelText)
+        menu = OptionMenu(self.options, variable, *menuOptions, command=command)
+        menu.configure(font=self.optionsMenuFont)
+        menu.configure(width=30)
+        ddMenu = self.root.nametowidget(menu.menuname)
+        ddMenu.config(font=self.optionsMenuFont)
+        menu.grid(row=self.optionsRowCounter, column=self.middleStartColumn+1, columnspan=2, sticky="ew", padx=5, pady=5, ipadx=2, ipady=2)
+        self.optionsRowCounter += 1
+        return menu
+
+    def configureRadioOption(self, radioFrame, text, variable, value):
+        radio = Radiobutton(radioFrame, text=text, variable=variable, value=value, font=self.optionsTextFont)
+        radio.pack(side="left",anchor="w")
+
+    def configureRadioOptions(self, frame, variable, options):
+        if (options[0] is tuple):
+            for option in options:
+                self.configureRadioOption(frame, option[0], variable, option[1])
+        else:
+            for option in options:
+                self.configureRadioOption(frame, option, variable, option)
+        
+        
+
+
+
+
+
+
     def generateNPC(self):
 
         npc = NPC(  self.raceTraitsOptions,
                     self.raceChoice.get(),
                     self.genderChoice.get(),
                     self.lifeStageChoice.get(),
-                    self.occupationTypeChoices.get(),
+                    self.occupationTypeChoice.get(),
                     "", #profession
                     self.cultureChoice.get()    )
 
