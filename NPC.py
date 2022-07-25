@@ -1,5 +1,6 @@
 import csv
 import math
+import os
 import random
 import sys
 from tkinter import messagebox
@@ -38,14 +39,6 @@ class NPC:
         self.attribute2Display = ""
         self.attribute3Display = ""
 
-        # Determine Occupation
-        if (profession == "Any"):
-            if (industry == "Any"):
-                self.industry = self.generateIndustry()
-            self.occupation = self.generateOccupation(self.industry)
-        else:
-            self.occupation = (industry, profession)
-
 
         # Determine Race and Extract Racial Traits
         if (race == "Any"):
@@ -80,6 +73,26 @@ class NPC:
             self.lifeStage = lifeStage
 
         self.age = str(self.getAge(raceLifeStages, self.lifeStage))
+
+
+        # Determine Occupation
+        if (profession != "Any"):
+            if (self.lifeStage != "Child" or (lifeStage != "Any" and self.lifeStage == "Child")):
+                self.occupation = (industry, profession)
+        else:
+            if (self.lifeStage == "Child"):
+                self.occupation = ("","None")
+            # Introduce a chance for an Adolescent to have a job
+            elif (self.lifeStage != "Adolescent" or (self.lifeStage == "Adolescent" and random.randint(1,100) < 50)):
+                if (industry == "Any"):
+                    self.industry = self.generateIndustry()
+                self.occupation = self.generateOccupation(self.industry)
+            else:
+                self.occupation = ("","None")
+
+            # Chance for Elder to have Retired qualifier
+            if (lifeStage == "Elder" and random.randint(1,100) < 25):
+                self.occupation = (self.industry, "Retired " + str(self.occupation[1]))
         
 
         # Determine Gender
@@ -144,10 +157,22 @@ class NPC:
         return random.choice(traits)
 
     def generateIndustry(self):
-        return ""
+        occupations = []
+        occupationsInDir =  os.listdir("resources\\occupations")
+        for occupation in occupationsInDir:
+            occupations.append(str.removesuffix(occupation,".csv"))
+        return random.choice(occupations)
 
-    def generateOccupation(self):
-        return ("","")
+    def generateOccupation(self,industry):
+        file = open("resources\\occupations\\"+industry+".csv")
+        reader = csv.reader(file)
+
+        professions = []
+        for profession in reader:
+            professions.append(profession[0])
+
+        file.close()
+        return (industry,random.choice(professions))
 
     def generateRace(self):
         race = random.choice(self.options)
@@ -244,7 +269,7 @@ class NPC:
 
     def buildDisplayText(self):
         self.nameDisplay = self.name[0] + " " + self.name[1]
-        self.occupationDisplay = self.occupationDisplay + self.occupation[0] + " | " + self.occupation[1]
+        self.occupationDisplay = self.occupationDisplay + str(self.occupation[1])
         self.raceDisplay = self.raceDisplay + self.race
         self.ageDisplay = self.ageDisplay + self.age + " (" + self.lifeStage + ")"
         self.genderDisplay = self.genderDisplay + self.gender
