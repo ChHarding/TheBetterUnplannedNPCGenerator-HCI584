@@ -5,6 +5,7 @@ from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import font
+from turtle import window_height
 
 from NPC import NPC
 
@@ -24,28 +25,80 @@ class BetterNPCGenerator():
         self.root = Tk()
         self.root.title("The Better Unplanned NPC Generator")
 
-        self.raceTraitsOptions = self.loadOptionsFromFile(self.presetsFilePath + "Default.csv")
+        defaultOptionsFileName = "Default.csv"
+        self.raceTraitsOptions = self.loadOptionsFromCsv(self.presetsFilePath + defaultOptionsFileName, TRUE)
+        
         self.npcHistoryList = []
 
         self.headerFont = font.Font(family="Century Schoolbook", size=10, weight="bold")
+        self.buttonFont = font.Font(family="Century Schoolbook", size=10)
+    
+        # Primary Colors
+        inkBlack = "#27221f"
+        veryLightParchment = "#fefdfb"
+        lightParchment = "#f5f0e5"
+        parchment = "#f0e6d1"
+        darkParchment = "#efdfbb"
+        darkerParchment = "#eae0c8"
+
+        # Accent Colors
+        lycheeRed = "#bb2f43"
+        libertyBlue = "#545aa7"
+
+        self.textColor = inkBlack
+        self.backgroundColor = lightParchment
+
+        self.buttonColor = lycheeRed
+        self.buttonTextColor = veryLightParchment
+
+        self.presetButtonColor = darkParchment
+        self.presetButtonTextColor = inkBlack
+        self.presetButtonSelectedColor = veryLightParchment
+        self.presetButtonHoverColor = parchment
+
+        self.dropDownColor = darkParchment
+        self.dropDownHoverColor = parchment
+        self.dropDownTextColor = inkBlack
+        self.dropDownExpandedHoverColor = libertyBlue
+        self.dropDownExpandedHoverTextColor = veryLightParchment
+
+        self.npcNameColor = lycheeRed
+
+        self.npcHistoryColor = veryLightParchment
+        self.npcHistorySelectColor = libertyBlue
+        self.npcHistorySelectTextColor = veryLightParchment
+
+        self.generateButtonFont = font.Font(family="Century Schoolbook", size=12, weight="bold")
+
+        self.presetsFont = font.Font(family="Century Gothic",size=11)
 
         self.optionsLabelFont = font.Font(family="Century Schoolbook", size=10, weight="bold")
-        self.optionsMenuFont = font.Font(family="Century Gothic", size=9)
-        self.optionsTextFont = font.Font(family="Centure Gothic", size=11)
+        self.optionsMenuFont = font.Font(family="Century Gothic", size=9, weight="bold")
+        self.optionsTextFont = font.Font(family="Century Gothic", size=11)
+        
+        self.npcNameFont = font.Font(family="Century Schoolbook", size=15, weight="bold")
+        self.npcDisplayFont = font.Font(family="Century Gothic", size=9)
+
+        self.historyTextFont = font.Font(family="Century Gothic", size=9)
+
+        self.root.configure(bg=self.backgroundColor)
 
         # ==================== #
         # Left Column: Presets #
         # ==================== #
 
         # Set up 3 Column structure
-        self.selectPreset = LabelFrame(self.root, text='Select Preset', font=self.headerFont)
+        self.selectPreset = LabelFrame(self.root, text="Presets", font=self.headerFont,background=self.backgroundColor, foreground=self.textColor)
         leftColumn = self.selectPreset
-        leftColumn.grid(row=0, column=self.leftStartColumn, rowspan=50, padx=5, pady=5, ipadx=5, ipady=5, sticky='NWES') 
+        leftColumn.grid(row=0, column=self.leftStartColumn, rowspan=50, padx=5, pady=5, ipady=5, sticky='NWES') 
+
 
         presets = os.listdir(self.presetsFilePath)
-
+        presets.sort()
+        presets.remove(defaultOptionsFileName)
+        presets.insert(0,defaultOptionsFileName)
         self.selectedPreset = StringVar()
-        self.buildPresetsMenu(presets, "Default.csv")
+        self.buildPresetsMenu(presets, defaultOptionsFileName)
 
         # On Click of another preset in list: reload options
         # File name will be [ OptionName + ".csv" ] in resources>presets
@@ -58,12 +111,12 @@ class BetterNPCGenerator():
 
         self.optionsRowCounter = 0
 
-        self.options = LabelFrame(self.root, text="Options", font=self.headerFont)
+        self.options = LabelFrame(self.root, text="Options", font=self.headerFont,background=self.backgroundColor, foreground=self.textColor)
         middleColumn = self.options
-        middleColumn.grid(row=0, column=self.middleStartColumn, rowspan=50, columnspan=3, padx=5, pady=5, ipadx=5, ipady=5, sticky="NWES") 
+        middleColumn.grid(row=0, column=self.middleStartColumn, rowspan=50, columnspan=3, padx=5, pady=5, sticky="NWES") 
 
-        optionsInstructions = Label(self.options, text='Choose your options, then click "Generate NPC"', font=self.optionsTextFont)
-        optionsInstructions.grid(row=self.optionsRowCounter,column=self.middleStartColumn,columnspan=3)
+        optionsInstructions = Label(self.options, text='Choose your options, then click "Generate NPC"', font=self.optionsTextFont, background=self.backgroundColor, foreground=self.textColor)
+        optionsInstructions.grid(row=self.optionsRowCounter,column=self.middleStartColumn,columnspan=3, pady=(10,5))
 
         self.optionsRowCounter += 1
 
@@ -117,7 +170,7 @@ class BetterNPCGenerator():
         self.cultureChoice = StringVar()
         self.cultureChoice.set("Any")
 
-        self.configureOptionsLabel("Name Culture")
+        self.configureOptionsLabel("Name Culture",padding=(5,(5,0),2,2))
         self.optionsRowCounter += 1
 
         self.cultureChoicesFrame = Frame(self.options)
@@ -127,7 +180,7 @@ class BetterNPCGenerator():
 
 
         # Buttons
-        generateNPCButton = Button(self.options, text='Generate NPC',command=self.generateNPC,width=15,font=("Arial",12,"bold"))
+        generateNPCButton = Button(self.options, text='Generate NPC',command=self.generateNPC,width=15,font=self.generateButtonFont, background=self.buttonColor, foreground=self.buttonTextColor)
         generateNPCButton.grid(row=self.optionsRowCounter,column=self.middleStartColumn,columnspan=3, padx=5, pady=5, ipadx=5, ipady=5)
 
 
@@ -136,53 +189,45 @@ class BetterNPCGenerator():
         # Right Column: NPC Display #
         # ========================= #
 
-        self.npcFrame = LabelFrame(self.root, text='NPC', font=self.headerFont)
+        self.npcDisplayRowCount = 0
+
+        self.npcFrame = LabelFrame(self.root, text='NPC', font=self.headerFont, background=self.backgroundColor, foreground=self.textColor)
         rightColumnTop = self.npcFrame
-        rightColumnTop.grid(row=0,column=self.rightStartColumn,sticky='NWES', padx=5, pady=5, ipadx=5, ipady=5) 
+        rightColumnTop.grid(row=self.npcDisplayRowCount,column=self.rightStartColumn, sticky='NWES', padx=5, pady=5) 
 
-        self.nameLabel = Label(self.npcFrame, text='Click "Generate NPC"',font='Arial 18 bold',width=20)
-        self.nameLabel.grid(row=0,column=self.rightStartColumn,columnspan=2)
-        self.occupationLabel = Label(self.npcFrame)
-        self.occupationLabel.grid(row=1,column=self.rightStartColumn,columnspan=2)
-        self.raceLabel = Label(self.npcFrame)
-        self.raceLabel.grid(row=2,column=self.rightStartColumn,columnspan=2)
-        self.ageLabel = Label(self.npcFrame)
-        self.ageLabel.grid(row=3,column=self.rightStartColumn,columnspan=2)
-        self.genderLabel = Label(self.npcFrame)
-        self.genderLabel.grid(row=4,column=self.rightStartColumn,columnspan=2)
-        self.heightLabel = Label(self.npcFrame)
-        self.heightLabel.grid(row=5,column=self.rightStartColumn,columnspan=2)
-        self.bodyTypeLabel = Label(self.npcFrame)
-        self.bodyTypeLabel.grid(row=6,column=self.rightStartColumn,columnspan=2)
-        self.eyeColorLabel = Label(self.npcFrame)
-        self.eyeColorLabel.grid(row=7,column=self.rightStartColumn,columnspan=2)
-        self.skinLabel = Label(self.npcFrame)
-        self.skinLabel.grid(row=8,column=self.rightStartColumn,columnspan=2)
-        self.attribute1Label = Label(self.npcFrame)
-        self.attribute1Label.grid(row=9,column=self.rightStartColumn,columnspan=2)
-        self.attribute2Label = Label(self.npcFrame)
-        self.attribute2Label.grid(row=10,column=self.rightStartColumn,columnspan=2)
-        self.attribute3Label = Label(self.npcFrame)
-        self.attribute3Label.grid(row=11,column=self.rightStartColumn,columnspan=2)
+        self.nameLabel = self.configureNPCDisplayField()
+        self.nameLabel.configure(text='Click "Generate NPC"')
+        self.nameLabel.configure(foreground=self.npcNameColor)
+        self.nameLabel.configure(font=self.npcNameFont)
 
-        exportNPCButton = Button(self.npcFrame, text='Export to File', command=self.saveNPC, width=20)
-        exportNPCButton.grid(row=20,column=self.rightStartColumn,padx=5, pady=5, ipadx=5, ipady=5)
+        self.occupationLabel = self.configureNPCDisplayField()
+        self.raceLabel = self.configureNPCDisplayField()
+        self.ageLabel = self.configureNPCDisplayField()
+        self.genderLabel = self.configureNPCDisplayField()
+        self.heightLabel = self.configureNPCDisplayField()
+        self.bodyTypeLabel = self.configureNPCDisplayField()
+        self.eyeColorLabel = self.configureNPCDisplayField()
+        self.skinLabel = self.configureNPCDisplayField()
+        self.attribute1Label = self.configureNPCDisplayField()
+        self.attribute2Label = self.configureNPCDisplayField()
+        self.attribute3Label = self.configureNPCDisplayField()
 
-        copyNPCButton = Button(self.npcFrame, text='Copy to Clipboard', command=self.copyNPC, width=20)
-        copyNPCButton.grid(row=20,column=self.rightStartColumn+1, padx=(0,5), pady=5, ipadx=5, ipady=5)
+        exportNPCButton = Button(self.npcFrame, text='Export to File', command=self.saveNPC, width=15, font=self.buttonFont, background=self.buttonColor, foreground=self.buttonTextColor)
+        exportNPCButton.grid(row=self.npcDisplayRowCount,column=self.rightStartColumn,padx=5, pady=5, ipadx=5, ipady=5)
+
+        copyNPCButton = Button(self.npcFrame, text='Copy to Clipboard', command=self.copyNPC, width=15, font=self.buttonFont, background=self.buttonColor, foreground=self.buttonTextColor)
+        copyNPCButton.grid(row=self.npcDisplayRowCount,column=self.rightStartColumn+1, padx=(0,5), pady=5, ipadx=5, ipady=5)
 
 
         # NPC History Panel
-        npcHistory = LabelFrame(self.root, text='History')
+        npcHistory = LabelFrame(self.root, text='History', font=self.headerFont, background=self.backgroundColor, foreground=self.textColor)
         rightColumnBottom = npcHistory
-        rightColumnBottom.grid(row=2,column=self.rightStartColumn,sticky='NWES', padx=5, pady=5, ipadx=5, ipady=5) 
+        rightColumnBottom.grid(row=2,column=self.rightStartColumn,columnspan=3, sticky='NWES', padx=5, pady=5) 
 
-        Label(npcHistory, text='Last 10 NPCs Generated').grid(row=4,column=self.rightStartColumn)
-        self.npcHistoryBox = Listbox(npcHistory,width=47,activestyle="none",font=('Courier New',8))
-        self.npcHistoryBox.grid(row=5,column=self.rightStartColumn)
+        Label(npcHistory, text='Last 10 NPCs Generated', font=self.historyTextFont, background=self.backgroundColor).grid(row=4,column=self.rightStartColumn,pady=(5,0))
+        self.npcHistoryBox = Listbox(npcHistory,activestyle="none",font=('Courier New',9,'bold'),width=39,height=10,borderwidth=0,background=self.npcHistoryColor,foreground=self.textColor,selectbackground=self.npcHistorySelectColor,selectforeground=self.npcHistorySelectTextColor)
+        self.npcHistoryBox.grid(column=self.rightStartColumn, columnspan=3,sticky="ew", pady=5, padx=5, ipadx=5, ipady=5)
         self.npcHistoryBox.bind("<<ListboxSelect>>", self.recallNPC)
-
-
 
         self.root.mainloop()
 
@@ -191,23 +236,29 @@ class BetterNPCGenerator():
 
      # Helper Methods #   
 
-    def configureOptionsLabel(self, labelText):
-        label = Label(self.options, text=labelText, justify="left", anchor="w", font=self.optionsLabelFont)
-        label.grid(row=self.optionsRowCounter, column=self.middleStartColumn, sticky="w", padx=5, pady=5, ipadx=5, ipady=5)
+    def configureOptionsLabel(self, labelText, padding=(5,5,2,2)):
+        label = Label(self.options, text=labelText, justify="left", anchor="w", font=self.optionsLabelFont, background=self.backgroundColor, foreground=self.textColor)
+        label.grid(row=self.optionsRowCounter, column=self.middleStartColumn, sticky="w", padx=padding[0], pady=padding[1], ipadx=padding[2], ipady=padding[3])
 
     def configureOptionsDropDownMenu(self, labelText, variable, menuOptions, command=""):
         self.configureOptionsLabel(labelText)
         menu = OptionMenu(self.options, variable, *menuOptions, command=command)
         menu.configure(font=self.optionsMenuFont)
         menu.configure(width=30)
+        menu.configure(background=self.dropDownColor)
+        menu.configure(foreground=self.dropDownTextColor)
+        menu.configure(borderwidth=0)
+        menu.configure(activebackground=self.dropDownHoverColor)
         ddMenu = self.root.nametowidget(menu.menuname)
         ddMenu.config(font=self.optionsMenuFont)
+        ddMenu.config(background=self.dropDownHoverColor)
+        ddMenu.config(activebackground=self.dropDownExpandedHoverColor)
         menu.grid(row=self.optionsRowCounter, column=self.middleStartColumn+1, columnspan=2, sticky="ew", padx=5, pady=5, ipadx=2, ipady=2)
         self.optionsRowCounter += 1
         return menu
 
     def configureRadioOption(self, radioFrame, text, variable, value):
-        radio = Radiobutton(radioFrame, text=text, variable=variable, value=value, font=self.optionsTextFont)
+        radio = Radiobutton(radioFrame, text=text, variable=variable, value=value, font=self.optionsTextFont, background=self.backgroundColor)
         radio.pack(side="left",anchor="w")
 
     def configureRadioOptions(self, frame, variable, options):
@@ -217,9 +268,52 @@ class BetterNPCGenerator():
         else:
             for option in options:
                 self.configureRadioOption(frame, option, variable, option)
-        
-        
 
+    def buildPresetsMenu(self, values, select):
+        for item in self.selectPreset.winfo_children():
+            item.destroy()
+        displayRow = 0
+        for text in values:
+            radio = Radiobutton(self.selectPreset, text = str.removesuffix(text,".csv"), variable = self.selectedPreset,
+                value = text, indicator = 0,
+                background = self.presetButtonColor,
+                foreground = self.presetButtonTextColor,
+                activebackground = self.presetButtonSelectedColor,
+                borderwidth=0,
+                relief=FLAT,
+                font=self.presetsFont,
+                command=self.refreshOptionsForm(""))
+            radio.grid(row=displayRow,column=self.leftStartColumn,sticky="ew", padx=5, pady=2, ipadx=7, ipady=2)
+            displayRow += 1
+        self.selectedPreset.set(select)
+
+    def configureNPCDisplayField(self):
+        label = Label(self.npcFrame, background=self.backgroundColor, font=self.npcDisplayFont, foreground=self.textColor)
+        label.grid(row=self.npcDisplayRowCount,column=self.rightStartColumn,columnspan=2)
+        self.npcDisplayRowCount += 1
+        return label
+
+
+
+
+#self.occupationTypesFilePath + "\\" + occupationType + ".csv"
+    def loadOptionsFromCsv(self, filePath, skipHeader=FALSE):
+        
+        file = open(filePath)
+        reader = csv.reader(file)
+
+        if (skipHeader):
+            next(reader)
+
+        items = []
+        for item in reader:
+            items.append(item)
+
+        items.sort()
+
+        file.close()
+
+        return items
 
 
 
@@ -268,7 +362,7 @@ class BetterNPCGenerator():
         # Clear and repopulate box
         self.npcHistoryBox.delete(0,END)
         for x, n in enumerate(self.npcHistoryList):
-            name = n.nameDisplay[0:25] + self.spacer(n.nameDisplay, 25) + " | " + n.race + " " + n.gender
+            name = " " + n.nameDisplay[0:20] + self.spacer(n.nameDisplay, 20) + " | " + n.race + " " + n.gender
             self.npcHistoryBox.insert(x, name)
         self.npcHistoryBox.select_set(0)
 
@@ -286,7 +380,7 @@ class BetterNPCGenerator():
             return
 
         file = filedialog.asksaveasfilename(filetypes=[("txt file", ".txt")],defaultextension=".txt", initialfile=npc.nameDisplay)
-        if file:  # user selected file
+        if file:
             fob = open(file, 'w')
             for line in npc.npcDisplayText:
                 fob.write(line + '\n')
@@ -313,36 +407,12 @@ class BetterNPCGenerator():
             return self.npcHistoryList[0]
     
     
-    def buildPresetsMenu(self, values, select):
-        for item in self.selectPreset.winfo_children():
-            item.destroy()
-        displayRow = 0
-        for text in values:
-            radio = Radiobutton(self.selectPreset, text = str.removesuffix(text,".csv"), variable = self.selectedPreset,
-                value = text, indicator = 0,
-                background = "light blue")
-            radio.grid(row=displayRow,column=self.leftStartColumn)
-            displayRow = displayRow + 1
-        self.selectedPreset.set(select)
+
             
-
-    def loadOptionsFromFile(self, optionsFileName):
-        optionsPresetFile = open(optionsFileName)
-
-        optionsReader = csv.reader(optionsPresetFile)
-
-        next(optionsReader) # Remove header values from returned results
-
-        raceTraits = []
-        for race in optionsReader:
-            raceTraits.append(race)
-
-        optionsPresetFile.close()
-
-        return raceTraits
     
     def refreshOptionsForm(self, options):
-        self.raceDropDown.configure(values=options)
+        x=1 
+        #self.raceDropDown.configure(values=options)
 
 
     def spacer(self, text, width):
