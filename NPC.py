@@ -1,9 +1,11 @@
 import csv
 import math
 import os
+import os.path
 import random
 import sys
 from tkinter import messagebox
+from unicodedata import name
 
 
 class NPC:
@@ -16,8 +18,9 @@ class NPC:
 
     namesFilePath = "resources\\names\\"
 
-    def __init__(self, options, race, gender, lifeStage, industry, profession, culture):
+    def __init__(self, options, race, raceWeights, gender, lifeStage, industry, profession, culture):
         self.options = options
+        self.raceWeights = raceWeights
         self.npcDisplayText = []
 
         self.gender = gender
@@ -175,8 +178,12 @@ class NPC:
         return (industry,random.choice(professions))
 
     def generateRace(self):
-        race = random.choice(self.options)
-        return race[0]
+        if (self.raceWeights[0] == ""):
+            randomRace = random.choice(self.options)
+            return randomRace[0]
+        else:
+            randomRace = random.choices(self.options,self.raceWeights,k=1)
+            return randomRace[0][0]
         #TODO: Implement weighted selection
 
     def generateGender(self):
@@ -237,8 +244,17 @@ class NPC:
         if (gender != "M" and gender != "F"):
             gender = "U"
 
-        firstNamesFile = open(self.namesFilePath + fnTradition + " First Names.csv")
-        surnamesFile = open(self.namesFilePath + sTradition + " Surnames.csv")
+        if (os.path.exists(self.namesFilePath + fnTradition + " First Names.csv")):
+            firstNamesFile = open(self.namesFilePath + fnTradition + " First Names.csv")
+        else:
+            print("The selected first name tradition does not have a corresponding file. Defaulting to Common.")
+            firstNamesFile = open(self.namesFilePath + "Common" + " First Names.csv")
+
+        if (os.path.exists(self.namesFilePath + sTradition + " Surnames.csv")):
+            surnamesFile = open(self.namesFilePath + sTradition + " Surnames.csv")
+        else:
+            print("The selected surname tradition does not have a corresponding file. Defaulting to Common.")
+            surnamesFile = open(self.namesFilePath + "Common" + " Surnames.csv")
 
         reader = csv.reader(firstNamesFile)
 
@@ -263,8 +279,17 @@ class NPC:
         return self.getNameByRaceTradition("Common","Common", gender)
 
     def getTrueRandomName(self, gender):
-        fnTrads = ["Common","Draconic","Dwarvish","Elvish","Halfling","Orcish"]
-        sTrads = ["Common","Draconic","Dwarvish","Elvish","Halfling"]
+        namesInDir =  os.listdir("resources\\names")
+
+        fnTrads = []
+        sTrads = []
+
+        for nameFile in namesInDir:
+            if ("First Names" in nameFile):
+                fnTrads.append(nameFile.removesuffix(" First Names.csv"))
+            elif ("Surnames" in nameFile):
+                sTrads.append(nameFile.removesuffix(" Surnames.csv"))
+
         return self.getNameByRaceTradition(random.choice(fnTrads), random.choice(sTrads), gender)
 
     def buildDisplayText(self):

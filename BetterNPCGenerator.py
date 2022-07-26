@@ -5,7 +5,6 @@ from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import font
-from turtle import window_height
 
 from NPC import NPC
 
@@ -27,7 +26,8 @@ class BetterNPCGenerator():
 
         defaultOptionsFileName = "Default.csv"
         self.raceTraitsOptions = self.loadOptionsFromCsv(self.presetsFilePath + defaultOptionsFileName, TRUE)
-        
+        self.raceTraitsOptions.sort()
+
         self.npcHistoryList = []
     
         # Primary Colors
@@ -65,7 +65,9 @@ class BetterNPCGenerator():
         self.npcHistorySelectColor = ashGray
         self.npcHistorySelectTextColor = veryLightParchment
 
-        # Fonts
+        #########
+        # Fonts #
+        #########
 
         self.headerFont = font.Font(family="Century Schoolbook", size=10, weight="bold")
         self.buttonFont = font.Font(family="Century Schoolbook", size=10, weight="bold")
@@ -124,8 +126,16 @@ class BetterNPCGenerator():
 
         # Race
         self.raceOptions = ["Any"]
+        self.raceWeights = []
         for race in self.raceTraitsOptions:
             self.raceOptions.append(race[0])
+            weight = 0
+            try:
+                weight = float(race[1])
+            except:
+                weight = ""
+            self.raceWeights.append(weight)
+        
 
         self.raceChoice = StringVar()
         self.raceChoice.set("Any")
@@ -289,16 +299,12 @@ class BetterNPCGenerator():
                 activebackground = self.presetButtonSelectedColor,
                 borderwidth=0,
                 relief=FLAT,
-                font=self.presetsFont,
-                command=self.refreshOptionsForm(""))
+                font=self.presetsFont)
             radio.grid(row=displayRow,column=self.leftStartColumn,sticky="ew", padx=5, pady=2, ipadx=7, ipady=2)
+            radio.configure(command=lambda: self.refreshOptions(self.selectedPreset.get()))
             displayRow += 1
         self.selectedPreset.set(select)
 
-
-
-
-#self.occupationTypesFilePath + "\\" + occupationType + ".csv"
     def loadOptionsFromCsv(self, filePath, skipHeader=FALSE):
         
         file = open(filePath)
@@ -321,7 +327,7 @@ class BetterNPCGenerator():
     def updateProfessions(self, selection):
         if (selection != "Any"):
             self.professionTypeOptions = self.loadOptionsFromCsv(self.occupationTypesFilePath + "\\" + selection + ".csv")
-            self.updateOptionsMenu(self.professionTypeDropDown, self.professionTypeChoice, self.professionTypeOptions)#.configure(self.options, self.professionTypeChoice, *self.professionTypeOptions)            
+            self.updateOptionsMenu(self.professionTypeDropDown, self.professionTypeChoice, self.professionTypeOptions)            
             self.professionTypeDropDown.configure(state=ACTIVE)
         else:
             self.professionTypeDropDown.configure(state=DISABLED)
@@ -340,6 +346,7 @@ class BetterNPCGenerator():
 
         npc = NPC(  self.raceTraitsOptions,
                     self.raceChoice.get(),
+                    self.raceWeights,
                     self.genderChoice.get(),
                     self.lifeStageChoice.get(),
                     self.occupationTypeChoice.get(),
@@ -427,9 +434,18 @@ class BetterNPCGenerator():
 
             
     
-    def refreshOptionsForm(self, options):
-        x=1 
-        #self.raceDropDown.configure(values=options)
+    def refreshOptions(self, presetName):
+        self.raceTraitsOptions = self.loadOptionsFromCsv(self.presetsFilePath + presetName, TRUE)
+        self.raceTraitsOptions.sort()
+
+        self.raceOptions.clear()
+        self.raceWeights.clear()
+
+        for race in self.raceTraitsOptions:
+            self.raceOptions.append(race)
+            self.raceWeights.append(float(race[1]))
+
+        self.updateOptionsMenu(self.raceDropDown, self.raceChoice, self.raceOptions)
 
 
     def spacer(self, text, width):
