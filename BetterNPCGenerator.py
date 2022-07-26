@@ -443,7 +443,12 @@ class BetterNPCGenerator():
 
         for race in self.raceTraitsOptions:
             self.raceOptions.append(race)
-            self.raceWeights.append(float(race[1]))
+            weight = 0
+            try:
+                weight = float(race[1])
+            except:
+                weight = ""
+            self.raceWeights.append(weight)
 
         self.updateOptionsMenu(self.raceDropDown, self.raceChoice, self.raceOptions)
 
