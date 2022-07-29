@@ -4,6 +4,7 @@ import os
 import os.path
 import random
 import sys
+
 from tkinter import messagebox
 
 
@@ -15,7 +16,7 @@ class NPC:
     # physicalChars = ("eyeColor", "skinColor", "height", "build", "")
     # occupation
 
-    namesFilePath = "resources\\names\\"
+    namesFilePath = "generation-criteria\\names\\"
 
     def __init__(self, options, race, raceWeights, gender, lifeStage, industry, profession, culture):
         self.options = options
@@ -160,13 +161,13 @@ class NPC:
 
     def generateIndustry(self):
         occupations = []
-        occupationsInDir =  os.listdir("resources\\occupations")
+        occupationsInDir =  os.listdir("generation-criteria\\occupations")
         for occupation in occupationsInDir:
             occupations.append(str.removesuffix(occupation,".csv"))
         return random.choice(occupations)
 
     def generateOccupation(self,industry):
-        file = open("resources\\occupations\\"+industry+".csv")
+        file = open("generation-criteria\\occupations\\"+industry+".csv")
         reader = csv.reader(file)
 
         professions = []
@@ -278,7 +279,7 @@ class NPC:
         return self.getNameByRaceTradition("Common","Common", gender)
 
     def getTrueRandomName(self, gender):
-        namesInDir =  os.listdir("resources\\names")
+        namesInDir =  os.listdir("generation-criteria\\names")
 
         fnTrads = []
         sTrads = []

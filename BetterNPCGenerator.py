@@ -10,10 +10,10 @@ from NPC import NPC
 
 class BetterNPCGenerator():
 
-    raceTraitsFileName = "resources\\Races.csv"
-    presetsFilePath = "resources\\presets\\"
-    occupationTypesFilePath = "resources\\occupations"
-    namesFilePath = "resources\\names"
+    raceTraitsFileName = "generation-criteria\\Races.csv"
+    presetsFilePath = "generation-criteria\\presets\\"
+    occupationTypesFilePath = "generation-criteria\\occupations"
+    namesFilePath = "generation-criteria\\names"
 
     leftStartColumn = 0
     middleStartColumn = 1
@@ -26,7 +26,7 @@ class BetterNPCGenerator():
         self.root.title("The Better Unplanned NPC Generator")
 
         defaultOptionsFileName = "Default.csv"
-        self.raceTraitsFile = self.loadOptionsFromCsv("resources\\Races.csv", TRUE, TRUE)
+        self.raceTraitsFile = self.loadOptionsFromCsv("generation-criteria\\Races.csv", TRUE, TRUE)
         self.raceTraitsFile.sort()
 
         self.raceTraits = self.raceTraitsFile.copy()
@@ -111,7 +111,7 @@ class BetterNPCGenerator():
         self.buildPresetsMenu(presets, defaultOptionsFileName)
 
         # On Click of another preset in list: reload options
-        # File name will be [ OptionName + ".csv" ] in resources>presets
+        # File name will be [ OptionName + ".csv" ] in generation-criteria>presets
 
 
 
@@ -149,7 +149,7 @@ class BetterNPCGenerator():
         self.raceDropDown = self.configureOptionsDropDownMenu("Race", self.raceChoice, self.raceOptions)
 
         # Gender
-        self.genderOptions = self.loadOptionsFromCsv("resources\\Genders.csv", FALSE)
+        self.genderOptions = self.loadOptionsFromCsv("generation-criteria\\Genders.csv", FALSE)
         self.genderOptions.insert(0,"Any")
             #["Any","Male","Female","Nonbinary"]
         #TODO: Load from CSV to allow user to configure custom genders
