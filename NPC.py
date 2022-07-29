@@ -4,21 +4,21 @@ import os
 import os.path
 import random
 import sys
+
 from tkinter import messagebox
 
 
 class NPC:
-    #name = ("FirstName","LastName")
-    #race = ""
-    #age = 0 # Age Ranges will Differ Per Race
-    #gender = "" # male, female, nonbinary. Expanded gender options can be end-user configured.
-    # physicalChars = ("eyeColor", "skinColor", "height", "build", "")
-    # occupation
-
-    namesFilePath = "resources\\names\\"
+    
+    namesFilePath = "generation-criteria\\names\\"
 
     def __init__(self, options, race, raceWeights, gender, lifeStage, industry, profession, culture):
+        
         self.options = options
+        # TODO: Make each option an object with easily referenceable variables
+        # Currently large maintenance problem with relying on index numbers to get the right values
+        # May also change the main Races file into a JSON file instead to simplify it further
+
         self.raceWeights = raceWeights
         self.npcDisplayText = []
 
@@ -78,13 +78,17 @@ class NPC:
 
 
         # Determine Occupation
+
+        # If industry and profession were both set manually
         if (profession != "Any"):
+            # If generated life stage is not Child, or it was manually set to Child
+            # Assign the chosen occupation
             if (self.lifeStage != "Child" or (lifeStage != "Any" and self.lifeStage == "Child")):
                 self.occupation = (industry, profession)
         else:
             if (self.lifeStage == "Child"):
                 self.occupation = ("","None")
-            # Introduce a chance for an Adolescent to have a job
+            # Chance for an Adolescent to have a job
             elif (self.lifeStage != "Adolescent" or (self.lifeStage == "Adolescent" and random.randint(1,100) < 50)):
                 if (industry == "Any"):
                     self.industry = self.generateIndustry()
@@ -160,13 +164,13 @@ class NPC:
 
     def generateIndustry(self):
         occupations = []
-        occupationsInDir =  os.listdir("resources\\occupations")
+        occupationsInDir =  os.listdir("generation-criteria\\occupations")
         for occupation in occupationsInDir:
             occupations.append(str.removesuffix(occupation,".csv"))
         return random.choice(occupations)
 
     def generateOccupation(self,industry):
-        file = open("resources\\occupations\\"+industry+".csv")
+        file = open("generation-criteria\\occupations\\"+industry+".csv")
         reader = csv.reader(file)
 
         professions = []
@@ -189,10 +193,31 @@ class NPC:
         self.gender = random.choice(["Male","Female"])
         self.genderCode = self.gender[0:1]
         #TODO: Load from CSV to allow user to configure custom genders
+        #TODO: Make the gender code its own column so custom genders can be coded masculine 
+        #      or feminine, rather than all of them being considered unisex
 
     def generateLifeStage(self):
         return random.choice(["Child","Adolescent","Young Adult","Adult","Elder"]) 
-        #TODO: Implement loading life stage choices
+        #TODO: Implement loading life stage choices from a file
+
+    def getAge(self, raceStages, lifeStage):
+        
+        lowRange = 0
+        upRange = 0
+
+        # The next life stage above the chosen one determines the upper bound of the age range
+        # Elder is a special case where the next stage up is defined as "Max Age", not its own life stage
+        for index, stage in enumerate(raceStages):
+            if (lifeStage == stage[0] and len(raceStages) != index-1):
+                lowRange = int(stage[1])
+                upRange = int(raceStages[index+1][1])
+
+        if (lowRange == 0 or upRange == 0):
+            errorMessage = "Something went wrong determining the age range for a " + lifeStage + " " + self.race + "."
+            messagebox.showerror("NPC Generation Error", errorMessage)
+            sys.exit(errorMessage)
+
+        return random.randrange(lowRange,upRange)
 
     def generateHeight(self, min, max, gender, lifeStage):
         lowRange = int(min)
@@ -220,23 +245,8 @@ class NPC:
         inches = int(heightInInches % 12)
         return str(feet) + "'" + str(inches) + "\""
 
-    def getAge(self, raceStages, lifeStage):
-        
-        lowRange = 0
-        upRange = 0
 
-        for index, stage in enumerate(raceStages):
-            if (lifeStage == stage[0] and len(raceStages) != index-1):
-                lowRange = int(stage[1])
-                upRange = int(raceStages[index+1][1])
-
-        if (lowRange == 0 or upRange == 0):
-            errorMessage = "Something went wrong determining the age range for a " + lifeStage + " " + self.race + "."
-            messagebox.showerror("NPC Generation Error", errorMessage)
-            sys.exit(errorMessage)
-
-        return random.randrange(lowRange,upRange)
-        #TODO: Need a better way to implement this in general
+    # Name Generation Methods #
 
     def getNameByRaceTradition(self, fnTradition, sTradition, gender):
 
@@ -278,7 +288,7 @@ class NPC:
         return self.getNameByRaceTradition("Common","Common", gender)
 
     def getTrueRandomName(self, gender):
-        namesInDir =  os.listdir("resources\\names")
+        namesInDir = os.listdir("generation-criteria\\names")
 
         fnTrads = []
         sTrads = []
@@ -291,7 +301,9 @@ class NPC:
 
         return self.getNameByRaceTradition(random.choice(fnTrads), random.choice(sTrads), gender)
 
-    def buildDisplayText(self):
+
+    def buildDisplayText(self):    
+        # Creates a standard display text array out of generated values
         self.nameDisplay = self.name[0] + " " + self.name[1]
         self.occupationDisplay = self.occupationDisplay + str(self.occupation[1])
         self.raceDisplay = self.raceDisplay + self.race

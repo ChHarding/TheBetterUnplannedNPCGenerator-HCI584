@@ -10,66 +10,76 @@ from NPC import NPC
 
 class BetterNPCGenerator():
 
-    raceTraitsFileName = "resources\\Races.csv"
-    presetsFilePath = "resources\\presets\\"
-    occupationTypesFilePath = "resources\\occupations"
-    namesFilePath = "resources\\names"
+    # Folders & Filepaths #
+    
+    # TODO Migrate folders and file paths to a settings file instead of hard-coding.
+    #      When this is complete, implement its use with the NPC class also.
 
+    raceTraitsFileName = "Races.csv"
+    defaultOptionsFileName = "Default.csv"
+    genderOptionsFileName = "Genders.csv"
+
+    generationCriteriaFolder = "generation-criteria\\"
+    namesFolderPath = generationCriteriaFolder + "names\\"
+    occupationTypesFolderPath = generationCriteriaFolder + "occupations\\"
+    presetsFolderPath = generationCriteriaFolder + "presets\\"
+
+    raceTraitsFilePath = generationCriteriaFolder + raceTraitsFileName
+    genderOptionsFilePath = generationCriteriaFolder + genderOptionsFileName
+    defaultOptionsFilePath = presetsFolderPath + defaultOptionsFileName
+
+    # Panel Column Numbers #
     leftStartColumn = 0
     middleStartColumn = 1
     rightStartColumn = 4
 
+    ##########
+    # Colors #
+    ##########
 
+    # TODO Migrate style definitions to a separate module
+
+    # Primary Colors
+    inkBlack = "#27221f"
+    veryLightParchment = "#fefdfb"
+    lightParchment = "#f5f0e5"
+    parchment = "#f0e6d1"
+    darkParchment = "#efdfbb"
+
+    # Accent Colors
+    lycheeRed = "#bb2f43"
+    ashGray = "#6f7678"
+
+    # Assigned Colors
+    defaultTextColor = inkBlack
+    defaultBackgroundColor = lightParchment
+
+    buttonColor = lycheeRed
+    buttonTextColor = veryLightParchment
+
+    presetButtonColor = darkParchment
+    presetButtonTextColor = inkBlack
+    presetButtonSelectedColor = veryLightParchment
+    presetButtonHoverColor = parchment
+
+    dropDownColor = darkParchment
+    dropDownHoverColor = parchment
+    dropDownTextColor = inkBlack
+    dropDownExpandedHoverColor = ashGray
+    dropDownExpandedHoverTextColor = veryLightParchment
+
+    npcNameColor = lycheeRed
+
+    npcHistoryColor = veryLightParchment
+    npcHistorySelectColor = ashGray
+    npcHistorySelectTextColor = veryLightParchment
 
     def __init__(self):
+
+        # Initialize Tk Root
         self.root = Tk()
         self.root.title("The Better Unplanned NPC Generator")
-
-        defaultOptionsFileName = "Default.csv"
-        self.raceTraitsFile = self.loadOptionsFromCsv("resources\\Races.csv", TRUE, TRUE)
-        self.raceTraitsFile.sort()
-
-        self.raceTraits = self.raceTraitsFile.copy()
-
-        self.raceOptionsFile = self.loadOptionsFromCsv(self.presetsFilePath + defaultOptionsFileName, TRUE, TRUE)
-        self.raceOptionsFile.sort()
-
-        self.npcHistoryList = []
-    
-        # Primary Colors
-        inkBlack = "#27221f"
-        veryLightParchment = "#fefdfb"
-        lightParchment = "#f5f0e5"
-        parchment = "#f0e6d1"
-        darkParchment = "#efdfbb"
-
-        # Accent Colors
-        lycheeRed = "#bb2f43"
-        ashGray = "#6f7678"
-
-        # Assigned Colors
-        self.defaultTextColor = inkBlack
-        self.defaultBackgroundColor = lightParchment
-
-        self.buttonColor = lycheeRed
-        self.buttonTextColor = veryLightParchment
-
-        self.presetButtonColor = darkParchment
-        self.presetButtonTextColor = inkBlack
-        self.presetButtonSelectedColor = veryLightParchment
-        self.presetButtonHoverColor = parchment
-
-        self.dropDownColor = darkParchment
-        self.dropDownHoverColor = parchment
-        self.dropDownTextColor = inkBlack
-        self.dropDownExpandedHoverColor = ashGray
-        self.dropDownExpandedHoverTextColor = veryLightParchment
-
-        self.npcNameColor = lycheeRed
-
-        self.npcHistoryColor = veryLightParchment
-        self.npcHistorySelectColor = ashGray
-        self.npcHistorySelectTextColor = veryLightParchment
+        self.root.configure(bg=self.defaultBackgroundColor)
 
         #########
         # Fonts #
@@ -91,34 +101,46 @@ class BetterNPCGenerator():
 
         self.historyTextFont = font.Font(family="Century Gothic", size=9)
 
-        self.root.configure(bg=self.defaultBackgroundColor)
 
+        # Load Races File and Default Preset #
+        self.raceTraitsFile = self.loadOptionsFromCsv(self.raceTraitsFilePath, TRUE, TRUE)
+        self.raceTraitsFile.sort()
+
+        self.raceTraits = self.raceTraitsFile.copy()
+
+        self.raceOptionsFile = []
+        self.raceOptionsFile = self.loadOptionsFromCsv(self.defaultOptionsFilePath, TRUE, TRUE)
+
+        self.npcHistoryList = []
+    
+        
         # ==================== #
         # Left Column: Presets #
         # ==================== #
 
-        # Set up 3 Column structure
         self.selectPreset = LabelFrame(self.root, text="Presets", font=self.headerFont,background=self.defaultBackgroundColor, foreground=self.defaultTextColor)
         leftColumn = self.selectPreset
         leftColumn.grid(row=0, column=self.leftStartColumn, rowspan=50, padx=5, pady=5, ipady=5, sticky='NWES') 
 
-
-        presets = os.listdir(self.presetsFilePath)
+        presets = os.listdir(self.presetsFolderPath)
         presets.sort()
-        presets.remove(defaultOptionsFileName)
-        presets.insert(0,defaultOptionsFileName)
+        presets.remove(self.defaultOptionsFileName)
+        presets.insert(0,self.defaultOptionsFileName)
         self.selectedPreset = StringVar()
-        self.buildPresetsMenu(presets, defaultOptionsFileName)
-
-        # On Click of another preset in list: reload options
-        # File name will be [ OptionName + ".csv" ] in resources>presets
-
+        self.configurePresetsMenu(presets, self.defaultOptionsFileName)
 
 
         # ====================== #
         # Middle Column: Options #
         # ====================== #
 
+        # NOTE: Place all options menu configurations in desired 
+        # display order and make sure row counter gets updated after each.
+
+        # Row counter is automatically updated with the 
+        # configureOptionsDropDownMenu method.
+       
+        # TODO Make this counter more robust
         self.optionsRowCounter = 0
 
         self.options = LabelFrame(self.root, text="Options", font=self.headerFont,background=self.defaultBackgroundColor, foreground=self.defaultTextColor)
@@ -130,37 +152,29 @@ class BetterNPCGenerator():
 
         self.optionsRowCounter += 1
 
+
         # Race
         self.raceOptions = ["Any"]
         self.raceWeights = []
-        for race in self.raceOptionsFile:
-            self.raceOptions.append(race[0])
-            weight = 0
-            try:
-                weight = float(race[1])
-            except:
-                weight = ""
-            self.raceWeights.append(weight)
-        
-
+        self.loadRaceOptionsAndWeights()
         self.raceChoice = StringVar()
         self.raceChoice.set("Any")
 
         self.raceDropDown = self.configureOptionsDropDownMenu("Race", self.raceChoice, self.raceOptions)
 
+
         # Gender
-        self.genderOptions = self.loadOptionsFromCsv("resources\\Genders.csv", FALSE)
+        self.genderOptions = self.loadOptionsFromCsv(self.genderOptionsFilePath, FALSE)
         self.genderOptions.insert(0,"Any")
-            #["Any","Male","Female","Nonbinary"]
-        #TODO: Load from CSV to allow user to configure custom genders
         self.genderChoice = StringVar()
         self.genderChoice.set("Any")
 
         self.genderDropDown = self.configureOptionsDropDownMenu("Gender", self.genderChoice, self.genderOptions)
 
+
         # Life Stage 
         self.lifeStageOptions = ["Any","Child","Adolescent","Young Adult","Adult","Elder"] 
-        #TODO: Load from the preset header label
+        #TODO: Load from a file
         self.lifeStageChoice = StringVar()
         self.lifeStageChoice.set("Any")
 
@@ -168,14 +182,15 @@ class BetterNPCGenerator():
 
 
         # Occupation
-        occupations =  os.listdir(self.occupationTypesFilePath)
+        occupations =  os.listdir(self.occupationTypesFolderPath)
         self.occupationTypeOptions = ["Any"]
         for occupation in occupations:
             self.occupationTypeOptions.append(str.removesuffix(occupation,".csv"))
         self.occupationTypeChoice = StringVar()
         self.occupationTypeChoice.set("Any")
 
-        self.occupationTypeDropDown = self.configureOptionsDropDownMenu("Occupation Type", self.occupationTypeChoice, self.occupationTypeOptions, self.updateProfessions)
+        self.occupationTypeDropDown = self.configureOptionsDropDownMenu("Occupation Type", self.occupationTypeChoice, self.occupationTypeOptions, self.updateProfessionsMenu)
+
 
         # Profession
         self.professionTypeOptions = ["Any"]
@@ -209,6 +224,13 @@ class BetterNPCGenerator():
         # Right Column: NPC Display #
         # ========================= #
 
+        # NOTE: Place all NPC Display rows in display order 
+        # and make sure row counter gets updated after each.
+        
+        # Row counter is automatically updated with the 
+        # configureNPCDisplayField method.
+       
+        # TODO Make this counter more robust
         self.npcDisplayRowCount = 0
 
         self.npcFrame = LabelFrame(self.root, text='NPC', font=self.headerFont, background=self.defaultBackgroundColor, foreground=self.defaultTextColor)
@@ -232,6 +254,7 @@ class BetterNPCGenerator():
         self.attribute2Label = self.configureNPCDisplayField()
         self.attribute3Label = self.configureNPCDisplayField()
 
+        # Buttons
         exportNPCButton = Button(self.npcFrame, text='Export to File', command=self.saveNPC, width=15, font=self.buttonFont, background=self.buttonColor, foreground=self.buttonTextColor)
         exportNPCButton.grid(row=self.npcDisplayRowCount,column=self.rightStartColumn,padx=5, pady=5, ipadx=5, ipady=5)
 
@@ -239,7 +262,10 @@ class BetterNPCGenerator():
         copyNPCButton.grid(row=self.npcDisplayRowCount,column=self.rightStartColumn+1, padx=(0,5), pady=5, ipadx=5, ipady=5)
 
 
-        # NPC History Panel
+        ###################################
+        # Right Column: NPC History Panel #
+        ###################################
+
         npcHistory = LabelFrame(self.root, text='History', font=self.headerFont, background=self.defaultBackgroundColor, foreground=self.defaultTextColor)
         rightColumnBottom = npcHistory
         rightColumnBottom.grid(row=2,column=self.rightStartColumn,sticky='NWES', padx=5, pady=5) 
@@ -249,12 +275,20 @@ class BetterNPCGenerator():
         self.npcHistoryBox.grid(column=self.rightStartColumn, columnspan=3,sticky="ew", pady=5, padx=5, ipadx=5, ipady=5)
         self.npcHistoryBox.bind("<<ListboxSelect>>", self.recallNPC)
 
+
+        ####################
+        # MAIN LOOP BEGINS #
+        ####################
+
+        # NOTE: All UI initialization should occur above this section #
         self.root.mainloop()
 
 
 
 
-     # Helper Methods #   
+    ##################
+    # Helper Methods #   
+    ##################
 
     def configureOptionsLabel(self, labelText, padding=(5,5,2,2)):
         label = Label(self.options, text=labelText, justify="left", anchor="w", font=self.optionsLabelFont, background=self.defaultBackgroundColor, foreground=self.defaultTextColor)
@@ -295,7 +329,7 @@ class BetterNPCGenerator():
         self.npcDisplayRowCount += 1
         return label
 
-    def buildPresetsMenu(self, values, select):
+    def configurePresetsMenu(self, values, select):
         for item in self.selectPreset.winfo_children():
             item.destroy()
         displayRow = 0
@@ -309,38 +343,35 @@ class BetterNPCGenerator():
                 relief=FLAT,
                 font=self.presetsFont)
             radio.grid(row=displayRow,column=self.leftStartColumn,sticky="ew", padx=5, pady=2, ipadx=7, ipady=2)
-            radio.configure(command=lambda: self.refreshOptions(self.selectedPreset.get()))
+            radio.configure(command=lambda: self.updateRaceOptions(self.selectedPreset.get()))
             displayRow += 1
         self.selectedPreset.set(select)
 
-    def loadOptionsFromCsv(self, filePath, sort=TRUE, skipHeader=FALSE):
-        
-        file = open(filePath)
-        reader = csv.reader(file)
 
-        if (skipHeader):
-            next(reader)
-
-        items = []
-        for item in reader:
-            items.append(item)
-
-        if (sort):
-            items.sort()
-
-        file.close()
-
-        return items
-
-
-    def updateProfessions(self, selection):
+    def updateProfessionsMenu(self, selection):
         if (selection != "Any"):
-            self.professionTypeOptions = self.loadOptionsFromCsv(self.occupationTypesFilePath + "\\" + selection + ".csv", TRUE)
+            self.professionTypeOptions = self.loadOptionsFromCsv(self.occupationTypesFolderPath + selection + ".csv", TRUE)
             self.updateOptionsMenu(self.professionTypeDropDown, self.professionTypeChoice, self.professionTypeOptions)            
             self.professionTypeDropDown.configure(state=ACTIVE)
         else:
             self.professionTypeDropDown.configure(state=DISABLED)
         self.professionTypeChoice.set("Any")
+
+    def updateRaceOptions(self, presetName):
+        self.raceTraits.clear()
+        self.raceOptions.clear()
+        self.raceWeights.clear()
+        
+        self.raceOptionsFile = self.loadOptionsFromCsv(self.presetsFolderPath + presetName, TRUE, TRUE)
+        self.loadRaceOptionsAndWeights()
+        
+        # Reload raceTraits
+        for raceTrait in self.raceTraitsFile:
+            for raceOption in self.raceOptions:
+                if (raceTrait[0] == raceOption):
+                    self.raceTraits.append(raceTrait)
+
+        self.updateOptionsMenu(self.raceDropDown, self.raceChoice, self.raceOptions)
 
     def updateOptionsMenu(self, optionMenu, variable, newOptions):
         menu = optionMenu["menu"]
@@ -348,10 +379,11 @@ class BetterNPCGenerator():
         menu.add_command(label="Any", 
                              command=lambda value="Any": variable.set(value))
         for string in newOptions:
-            menu.add_command(label=string[0], 
-                             command=lambda value=string[0]: variable.set(value))
+            menu.add_command(label=string, 
+                             command=lambda value=string: variable.set(value))
         variable.set("Any")
-
+    
+    
     def generateNPC(self):
 
         npc = NPC(  self.raceTraits,
@@ -431,7 +463,6 @@ class BetterNPCGenerator():
         
         messagebox.showinfo("NPC Copied", npc.nameDisplay + " has been copied to the clipboard.")
 
-
     def getCurrentNPC(self):
         if (len(self.npcHistoryList) == 0):
             errorMessage = "No NPCs currently loaded."
@@ -441,33 +472,36 @@ class BetterNPCGenerator():
             return self.npcHistoryList[0]
     
     
+    def loadOptionsFromCsv(self, filePath, sort=TRUE, skipHeader=FALSE):
+        file = open(filePath)
+        reader = csv.reader(file)
 
-            
-    
-    def refreshOptions(self, presetName):
-        self.raceOptionsFile = self.loadOptionsFromCsv(self.presetsFilePath + presetName, TRUE, TRUE)
-        self.raceOptionsFile.sort()
+        if (skipHeader):
+            next(reader)
 
-        self.raceTraits.clear()
-        self.raceOptions.clear()
-        self.raceWeights.clear()
+        items = []
+        for item in reader:
+            items.append(item)
 
+        if (sort):
+            items.sort()
+
+        file.close()
+
+        return items
+
+    def loadRaceOptionsAndWeights(self):
         for race in self.raceOptionsFile:
-            self.raceOptions.append(race)
+            if (len(race[0]) > 0):
+                self.raceOptions.append(race[0])
+            else:
+                self.raceOptions.append(race)
             weight = 0
             try:
                 weight = float(race[1])
             except:
                 weight = ""
             self.raceWeights.append(weight)
-
-        for raceTrait in self.raceTraitsFile:
-            for raceOption in self.raceOptions:
-                if (raceTrait[0] == raceOption[0]):
-                    self.raceTraits.append(raceTrait)
-
-        self.updateOptionsMenu(self.raceDropDown, self.raceChoice, self.raceOptions)
-
 
     def spacer(self, text, width):
         spaces = ""
