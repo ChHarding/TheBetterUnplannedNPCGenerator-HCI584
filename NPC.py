@@ -62,12 +62,12 @@ class NPC:
 
         
         # Determine Life Stage and Age
-        raceLifeStages = [  ("Child",raceTraits[2]),
-                            ("Adolescent",raceTraits[3]),
-                            ("Young Adult",raceTraits[4]),
-                            ("Adult",raceTraits[5]),
-                            ("Elder",raceTraits[6]),
-                            ("Max",raceTraits[7])   ] # Maximum age possible, not its own lifeStage
+        raceLifeStages = [  ("Child",raceTraits[1]),
+                            ("Adolescent",raceTraits[2]),
+                            ("Young Adult",raceTraits[3]),
+                            ("Adult",raceTraits[4]),
+                            ("Elder",raceTraits[5]),
+                            ("Max",raceTraits[6])   ] # Maximum age possible, not its own lifeStage
 
         if (lifeStage == "Any"): # Child, Teenager, Young Adult, Adult, Elder
             self.lifeStage = self.generateLifeStage()
@@ -106,32 +106,32 @@ class NPC:
 
 
         # Determine Physical Characteristics
-        self.eyeColor = self.generateRandomTraitPipeDelimited(raceTraits[10])
+        self.eyeColor = self.generateRandomTraitPipeDelimited(raceTraits[9])
 
-        self.skinLabel = raceTraits[11] + " Color: "
-        self.skinColor = self.generateRandomTraitPipeDelimited(raceTraits[12])
+        self.skinLabel = raceTraits[10] + " Color: "
+        self.skinColor = self.generateRandomTraitPipeDelimited(raceTraits[11])
 
-        self.height = self.generateHeight(raceTraits[19], raceTraits[20], self.genderCode, self.lifeStage)
+        self.height = self.generateHeight(raceTraits[18], raceTraits[19], self.genderCode, self.lifeStage)
         self.bodyType = random.choice(["Thin","Lean","Lanky","Slender","Petite","Athletic","Muscular","Heavy","Portly","Plump","Chubby","Big-Boned","Beefy","Well-Built"])
         #TODO: Implement loading body types from file
 
-        if (raceTraits[13] != ""):
-            self.att1Label = raceTraits[13] + ": "
-            self.att1Property = self.generateRandomTraitPipeDelimited(raceTraits[14])
+        if (raceTraits[12] != ""):
+            self.att1Label = raceTraits[12] + ": "
+            self.att1Property = self.generateRandomTraitPipeDelimited(raceTraits[13])
         else: 
             self.att1Label = ""
             self.att1Property = ""
 
-        if (raceTraits[15] != ""):
-            self.att2Label = raceTraits[15] + ": "
-            self.att2Property = self.generateRandomTraitPipeDelimited(raceTraits[16])
+        if (raceTraits[14] != ""):
+            self.att2Label = raceTraits[14] + ": "
+            self.att2Property = self.generateRandomTraitPipeDelimited(raceTraits[15])
         else: 
             self.att2Label = ""
             self.att2Property = ""
 
-        if (raceTraits[17] != ""):
-            self.att3Label = raceTraits[17] + ": "
-            self.att3Property = self.generateRandomTraitPipeDelimited(raceTraits[18])
+        if (raceTraits[16] != ""):
+            self.att3Label = raceTraits[16] + ": "
+            self.att3Property = self.generateRandomTraitPipeDelimited(raceTraits[17])
         else:  
             self.att3Label = ""
             self.att3Property = ""
@@ -139,7 +139,7 @@ class NPC:
 
         # Get Random Name
         if (culture == "Traditional"):
-            self.name = self.getNameByRaceTradition(raceTraits[8],raceTraits[9],self.genderCode)
+            self.name = self.getNameByRaceTradition(raceTraits[7],raceTraits[8],self.genderCode)
         elif (culture == "Common"):
             self.name = self.getCommonName(self.genderCode)
         else:
