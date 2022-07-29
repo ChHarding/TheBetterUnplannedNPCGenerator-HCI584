@@ -246,7 +246,8 @@ class NPC:
         return str(feet) + "'" + str(inches) + "\""
 
 
-    # Name Generation #
+    # Name Generation Methods #
+
     def getNameByRaceTradition(self, fnTradition, sTradition, gender):
 
         if (gender != "M" and gender != "F"):
@@ -287,7 +288,7 @@ class NPC:
         return self.getNameByRaceTradition("Common","Common", gender)
 
     def getTrueRandomName(self, gender):
-        namesInDir =  os.listdir("generation-criteria\\names")
+        namesInDir = os.listdir("generation-criteria\\names")
 
         fnTrads = []
         sTrads = []
@@ -300,8 +301,9 @@ class NPC:
 
         return self.getNameByRaceTradition(random.choice(fnTrads), random.choice(sTrads), gender)
 
-    # Create a standard display text array out of generated values
-    def buildDisplayText(self):
+
+    def buildDisplayText(self):    
+        # Creates a standard display text array out of generated values
         self.nameDisplay = self.name[0] + " " + self.name[1]
         self.occupationDisplay = self.occupationDisplay + str(self.occupation[1])
         self.raceDisplay = self.raceDisplay + self.race

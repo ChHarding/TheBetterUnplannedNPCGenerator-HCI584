@@ -11,6 +11,7 @@ from NPC import NPC
 class BetterNPCGenerator():
 
     # Folders & Filepaths #
+    
     # TODO Migrate folders and file paths to a settings file instead of hard-coding.
     #      When this is complete, implement its use with the NPC class also.
 
