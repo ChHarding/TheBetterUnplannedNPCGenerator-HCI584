@@ -10,6 +10,7 @@ from NPC import NPC
 
 class BetterNPCGenerator():
 
+    raceTraitsFileName = "resources\\Races.csv"
     presetsFilePath = "resources\\presets\\"
     occupationTypesFilePath = "resources\\occupations"
     namesFilePath = "resources\\names"
