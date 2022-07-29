@@ -10,6 +10,7 @@ from NPC import NPC
 
 class BetterNPCGenerator():
 
+    raceTraitsFileName = "resources\\Races.csv"
     presetsFilePath = "resources\\presets\\"
     occupationTypesFilePath = "resources\\occupations"
     namesFilePath = "resources\\names"
@@ -25,8 +26,10 @@ class BetterNPCGenerator():
         self.root.title("The Better Unplanned NPC Generator")
 
         defaultOptionsFileName = "Default.csv"
-        self.raceTraitsOptions = self.loadOptionsFromCsv(self.presetsFilePath + defaultOptionsFileName, TRUE)
-        self.raceTraitsOptions.sort()
+        self.raceTraits = self.loadOptionsFromCsv(self.raceTraitsFileName)
+        self.raceTraits.sort()
+        self.raceOptions = self.loadOptionsFromCsv(self.presetsFilePath + defaultOptionsFileName, TRUE)
+        self.raceOptions.sort()
 
         self.npcHistoryList = []
     
@@ -127,7 +130,7 @@ class BetterNPCGenerator():
         # Race
         self.raceOptions = ["Any"]
         self.raceWeights = []
-        for race in self.raceTraitsOptions:
+        for race in self.raceOptions:
             self.raceOptions.append(race[0])
             weight = 0
             try:
@@ -344,7 +347,7 @@ class BetterNPCGenerator():
 
     def generateNPC(self):
 
-        npc = NPC(  self.raceTraitsOptions,
+        npc = NPC(  self.raceTraits,
                     self.raceChoice.get(),
                     self.raceWeights,
                     self.genderChoice.get(),
@@ -435,13 +438,13 @@ class BetterNPCGenerator():
             
     
     def refreshOptions(self, presetName):
-        self.raceTraitsOptions = self.loadOptionsFromCsv(self.presetsFilePath + presetName, TRUE)
-        self.raceTraitsOptions.sort()
+        self.raceOptions = self.loadOptionsFromCsv(self.presetsFilePath + presetName, TRUE)
+        self.raceOptions.sort()
 
         self.raceOptions.clear()
         self.raceWeights.clear()
 
-        for race in self.raceTraitsOptions:
+        for race in self.raceOptions:
             self.raceOptions.append(race)
             weight = 0
             try:

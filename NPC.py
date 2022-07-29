@@ -5,7 +5,6 @@ import os.path
 import random
 import sys
 from tkinter import messagebox
-from unicodedata import name
 
 
 class NPC:

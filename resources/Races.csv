@@ -1,0 +1,11 @@
+Race,Generation Weight,Child,Adolescent,Young Adult,Adult,Elder,Max Age,First Name Tradition,Surname Tradition,Eye Color,Skin/Scale/Fur,Skin/Scale/Fur Color,Accent Type,Accent Trait,Accent 2 Type,Accent 2 Trait,Accent 3 Type,Accent 3 Trait,Height Min,Height Max
+Dragonborn,,1,5,15,30,50,80,Draconic,Draconic,Light Red|Red|Orange|Gold|Amber,Scale,Red|Blue|Green|Black|White|Copper|Brass|Silver|Gold|Bronze|Amethyst|Crystal|Emerald|Sapphire|Topaz,,,,,,,72,96
+Dwarf,,4,13,50,200,300,350,Dwarvish,Dwarvish,Amber|Blue|Brown|Gray|Green|Hazel,Skin,Tawny|Fair|Tanned|Mahogany,Hair Color,Blonde|Sandy Blonde|Light Brown|Medium Brown|Dark Brown|Black|Red,,,,,48,60
+Elf,,5,15,100,300,500,700,Elvish,Elvish,Brown|Hazel|Emerald|Blue|Red,Skin,Golden|Pale White|Copper|Dark Purple|Olive|Red|Bronze,Hair Color,White|Silver|Blonde|Light Blue|Black,,,,,48,70
+Gnome,,4,13,18,40,250,500,Gnomish,Gnomish,Amber|Blue|Brown|Gray|Green|Hazel|Red|Violet|White|Black,Skin,Red|Tan|Reddish Brown|Earthy Brown|Light Gray|Dark Gray|Gray,Hair Color,Blonde|Brown|White|Orange|Green,,,,,36,48
+Half-Elf,,4,13,18,95,140,180,Common,Elvish,Amber|Violet|Brown|Emerald|Blue|Red,Skin,Golden|Pale White|Copper|Dark Purple|Olive|Red|Bronze,Hair Color,Blonde|Sandy Blonde|Light Brown|Medium Brown|Dark Brown|Black|Red,,,,,50,76
+Halfling,,4,13,20,100,200,250,Halfling,Halfling,Amber|Blue|Brown|Gray|Green|Hazel,Skin,Tanned|Fair,Hair Color,Blonde|Sandy Blonde|Light Brown|Medium Brown|Dark Brown|Black|Red,,,,,30,42
+Half-Orc,,3,9,14,25,50,80,Orcish,Common,Gray|Black|Green,Skin,Gray|Green,Hair Color,Black|Gray,,,,,60,84
+Human,,4,13,18,35,60,100,Common,Common,Amber|Blue|Brown|Gray|Green|Hazel|Red|Violet|White,Skin,Dusky Brown|Tawny|Fair|Amber|Bronze|Dark Mahogany,Hair Color,Blonde|Sandy Blonde|Light Brown|Medium Brown|Dark Brown|Black|Red,,,,,54,80
+Tabaxi,,4,13,18,35,60,100,Tabaxi,Tabaxi,Green|Emerald|Gold|Amber|Hazel,Fur,Light-Yellow|Orange|Reddish Brown|Brown|Black|Gray|Blue-Gray|White,Pattern Color,Light-Yellow|Orange|Reddish Brown|Brown|Black|Gray|Blue-Gray|White,Pattern,Spotted|Striped|Tuxedo|Tabby|Flame-Point|None,,,64,84
+Tiefling,,4,13,18,35,70,120,Infernal,Infernal,Red|Black|White|Silver|Gold,Skin,Dusky Brown|Dark Mahogany|Red|Dark Red|Pink|Purple|Blue,Hair Color,Dark Blue|Purple|Red,Horn Style,Curled|Straight|Spiral,,,54,80
