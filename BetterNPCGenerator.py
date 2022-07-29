@@ -25,8 +25,13 @@ class BetterNPCGenerator():
         self.root.title("The Better Unplanned NPC Generator")
 
         defaultOptionsFileName = "Default.csv"
-        self.raceTraitsOptions = self.loadOptionsFromCsv(self.presetsFilePath + defaultOptionsFileName, TRUE)
-        self.raceTraitsOptions.sort()
+        self.raceTraitsFile = self.loadOptionsFromCsv("resources\\Races.csv", TRUE, TRUE)
+        self.raceTraitsFile.sort()
+
+        self.raceTraits = self.raceTraitsFile.copy()
+
+        self.raceOptionsFile = self.loadOptionsFromCsv(self.presetsFilePath + defaultOptionsFileName, TRUE, TRUE)
+        self.raceOptionsFile.sort()
 
         self.npcHistoryList = []
     
@@ -127,7 +132,7 @@ class BetterNPCGenerator():
         # Race
         self.raceOptions = ["Any"]
         self.raceWeights = []
-        for race in self.raceTraitsOptions:
+        for race in self.raceOptionsFile:
             self.raceOptions.append(race[0])
             weight = 0
             try:
@@ -143,7 +148,9 @@ class BetterNPCGenerator():
         self.raceDropDown = self.configureOptionsDropDownMenu("Race", self.raceChoice, self.raceOptions)
 
         # Gender
-        self.genderOptions = ["Any","Male","Female","Nonbinary"]
+        self.genderOptions = self.loadOptionsFromCsv("resources\\Genders.csv", FALSE)
+        self.genderOptions.insert(0,"Any")
+            #["Any","Male","Female","Nonbinary"]
         #TODO: Load from CSV to allow user to configure custom genders
         self.genderChoice = StringVar()
         self.genderChoice.set("Any")
@@ -305,7 +312,7 @@ class BetterNPCGenerator():
             displayRow += 1
         self.selectedPreset.set(select)
 
-    def loadOptionsFromCsv(self, filePath, skipHeader=FALSE):
+    def loadOptionsFromCsv(self, filePath, sort=TRUE, skipHeader=FALSE):
         
         file = open(filePath)
         reader = csv.reader(file)
@@ -317,7 +324,8 @@ class BetterNPCGenerator():
         for item in reader:
             items.append(item)
 
-        items.sort()
+        if (sort):
+            items.sort()
 
         file.close()
 
@@ -326,7 +334,7 @@ class BetterNPCGenerator():
 
     def updateProfessions(self, selection):
         if (selection != "Any"):
-            self.professionTypeOptions = self.loadOptionsFromCsv(self.occupationTypesFilePath + "\\" + selection + ".csv")
+            self.professionTypeOptions = self.loadOptionsFromCsv(self.occupationTypesFilePath + "\\" + selection + ".csv", TRUE)
             self.updateOptionsMenu(self.professionTypeDropDown, self.professionTypeChoice, self.professionTypeOptions)            
             self.professionTypeDropDown.configure(state=ACTIVE)
         else:
@@ -341,10 +349,11 @@ class BetterNPCGenerator():
         for string in newOptions:
             menu.add_command(label=string[0], 
                              command=lambda value=string[0]: variable.set(value))
+        variable.set("Any")
 
     def generateNPC(self):
 
-        npc = NPC(  self.raceTraitsOptions,
+        npc = NPC(  self.raceTraits,
                     self.raceChoice.get(),
                     self.raceWeights,
                     self.genderChoice.get(),
@@ -435,13 +444,14 @@ class BetterNPCGenerator():
             
     
     def refreshOptions(self, presetName):
-        self.raceTraitsOptions = self.loadOptionsFromCsv(self.presetsFilePath + presetName, TRUE)
-        self.raceTraitsOptions.sort()
+        self.raceOptionsFile = self.loadOptionsFromCsv(self.presetsFilePath + presetName, TRUE, TRUE)
+        self.raceOptionsFile.sort()
 
+        self.raceTraits.clear()
         self.raceOptions.clear()
         self.raceWeights.clear()
 
-        for race in self.raceTraitsOptions:
+        for race in self.raceOptionsFile:
             self.raceOptions.append(race)
             weight = 0
             try:
@@ -449,6 +459,11 @@ class BetterNPCGenerator():
             except:
                 weight = ""
             self.raceWeights.append(weight)
+
+        for raceTrait in self.raceTraitsFile:
+            for raceOption in self.raceOptions:
+                if (raceTrait[0] == raceOption[0]):
+                    self.raceTraits.append(raceTrait)
 
         self.updateOptionsMenu(self.raceDropDown, self.raceChoice, self.raceOptions)
 
