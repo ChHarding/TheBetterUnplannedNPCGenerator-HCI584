@@ -379,8 +379,11 @@ class BetterNPCGenerator():
         menu.add_command(label="Any", 
                              command=lambda value="Any": variable.set(value))
         for string in newOptions:
-            menu.add_command(label=string, 
-                             command=lambda value=string: variable.set(value))
+            s = string
+            if (isinstance(string,list)):
+                s = string[0]
+            menu.add_command(label=s, 
+                             command=lambda value=s: variable.set(value))
         variable.set("Any")
     
     

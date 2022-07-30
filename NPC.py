@@ -79,6 +79,7 @@ class NPC:
 
         # Determine Occupation
 
+        self.occupation = ("","None")
         # If industry and profession were both set manually
         if (profession != "Any"):
             # If generated life stage is not Child, or it was manually set to Child
@@ -86,15 +87,12 @@ class NPC:
             if (self.lifeStage != "Child" or (lifeStage != "Any" and self.lifeStage == "Child")):
                 self.occupation = (industry, profession)
         else:
-            if (self.lifeStage == "Child"):
-                self.occupation = ("","None")
-            # Chance for an Adolescent to have a job
-            elif (self.lifeStage != "Adolescent" or (self.lifeStage == "Adolescent" and random.randint(1,100) < 50)):
-                if (industry == "Any"):
-                    self.industry = self.generateIndustry()
-                self.occupation = self.generateOccupation(self.industry)
-            else:
-                self.occupation = ("","None")
+            if (self.lifeStage != "Child"):
+                # Chance for an Adolescent to have a job
+                if (self.lifeStage != "Adolescent" or (self.lifeStage == "Adolescent" and random.randint(1,100) < 50)):
+                    if (industry == "Any"):
+                        self.industry = self.generateIndustry()
+                    self.occupation = self.generateOccupation(self.industry)
 
             # Chance for Elder to have Retired qualifier
             if (lifeStage == "Elder" and random.randint(1,100) < 25):
